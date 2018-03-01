@@ -1,0 +1,226 @@
+var _rnons$elm_svg_parser$SvgParser$xmlDeclarationParser = A2(
+	_elm_community$parser_combinators$Combine_ops['<$>'],
+	_elm_lang$core$String$fromList,
+	A2(
+		_elm_community$parser_combinators$Combine_ops['*>'],
+		A2(
+			_elm_community$parser_combinators$Combine_ops['*>'],
+			_elm_community$parser_combinators$Combine$whitespace,
+			_elm_community$parser_combinators$Combine$string('<?xml')),
+		A2(
+			_elm_community$parser_combinators$Combine$manyTill,
+			_elm_community$parser_combinators$Combine_Char$anyChar,
+			_elm_community$parser_combinators$Combine$string('?>'))));
+var _rnons$elm_svg_parser$SvgParser$toAttribute = function (_p0) {
+	var _p1 = _p0;
+	return A2(_elm_lang$virtual_dom$VirtualDom$attribute, _p1._0, _p1._1);
+};
+var _rnons$elm_svg_parser$SvgParser$elementToSvg = function (element) {
+	return A3(
+		_elm_lang$svg$Svg$node,
+		element.name,
+		A2(_elm_lang$core$List$map, _rnons$elm_svg_parser$SvgParser$toAttribute, element.attributes),
+		A2(_elm_lang$core$List$map, _rnons$elm_svg_parser$SvgParser$nodeToSvg, element.children));
+};
+var _rnons$elm_svg_parser$SvgParser$nodeToSvg = function (svgNode) {
+	var _p2 = svgNode;
+	switch (_p2.ctor) {
+		case 'SvgElement':
+			return _rnons$elm_svg_parser$SvgParser$elementToSvg(_p2._0);
+		case 'SvgText':
+			return _elm_lang$svg$Svg$text(_p2._0);
+		default:
+			return _elm_lang$svg$Svg$text('');
+	}
+};
+var _rnons$elm_svg_parser$SvgParser$attributeParser = A2(
+	_elm_community$parser_combinators$Combine_ops['<*>'],
+	A2(
+		_elm_community$parser_combinators$Combine_ops['<$>'],
+		F2(
+			function (v0, v1) {
+				return {ctor: '_Tuple2', _0: v0, _1: v1};
+			}),
+		_elm_community$parser_combinators$Combine$regex('[^=>/]+')),
+	A2(
+		_elm_community$parser_combinators$Combine$optional,
+		'',
+		A2(
+			_elm_community$parser_combinators$Combine_ops['<*'],
+			A2(
+				_elm_community$parser_combinators$Combine_ops['*>'],
+				_elm_community$parser_combinators$Combine$string('=\"'),
+				_elm_community$parser_combinators$Combine$regex('[^\"]*')),
+			_elm_community$parser_combinators$Combine$string('\"'))));
+var _rnons$elm_svg_parser$SvgParser$Element = F3(
+	function (a, b, c) {
+		return {name: a, attributes: b, children: c};
+	});
+var _rnons$elm_svg_parser$SvgParser$openingParser = A2(
+	_elm_community$parser_combinators$Combine_ops['<*>'],
+	A2(
+		_elm_community$parser_combinators$Combine_ops['<*>'],
+		A2(
+			_elm_community$parser_combinators$Combine_ops['<$>'],
+			F3(
+				function (_p3, tagName, attributes) {
+					return A3(
+						_rnons$elm_svg_parser$SvgParser$Element,
+						tagName,
+						attributes,
+						{ctor: '[]'});
+				}),
+			_elm_community$parser_combinators$Combine$string('<')),
+		_elm_community$parser_combinators$Combine$regex('[^/> ]+')),
+	A2(
+		_elm_community$parser_combinators$Combine_ops['<*'],
+		A2(
+			_elm_community$parser_combinators$Combine_ops['*>'],
+			_elm_community$parser_combinators$Combine$whitespace,
+			A2(_elm_community$parser_combinators$Combine$sepBy, _elm_community$parser_combinators$Combine$whitespace, _rnons$elm_svg_parser$SvgParser$attributeParser)),
+		_elm_community$parser_combinators$Combine$whitespace));
+var _rnons$elm_svg_parser$SvgParser$SvgComment = function (a) {
+	return {ctor: 'SvgComment', _0: a};
+};
+var _rnons$elm_svg_parser$SvgParser$commentParser = _elm_community$parser_combinators$Combine$lazy(
+	function (_p4) {
+		return A2(
+			_elm_community$parser_combinators$Combine_ops['<$>'],
+			function (_p5) {
+				return _rnons$elm_svg_parser$SvgParser$SvgComment(
+					_elm_lang$core$String$fromList(_p5));
+			},
+			A2(
+				_elm_community$parser_combinators$Combine_ops['*>'],
+				A2(
+					_elm_community$parser_combinators$Combine_ops['*>'],
+					_elm_community$parser_combinators$Combine$whitespace,
+					_elm_community$parser_combinators$Combine$string('<!--')),
+				A2(
+					_elm_community$parser_combinators$Combine$manyTill,
+					_elm_community$parser_combinators$Combine_Char$anyChar,
+					_elm_community$parser_combinators$Combine$string('-->'))));
+	});
+var _rnons$elm_svg_parser$SvgParser$SvgText = function (a) {
+	return {ctor: 'SvgText', _0: a};
+};
+var _rnons$elm_svg_parser$SvgParser$textParser = _elm_community$parser_combinators$Combine$lazy(
+	function (_p6) {
+		return A2(
+			_elm_community$parser_combinators$Combine_ops['<$>'],
+			_rnons$elm_svg_parser$SvgParser$SvgText,
+			A2(
+				_elm_community$parser_combinators$Combine_ops['*>'],
+				_elm_community$parser_combinators$Combine$whitespace,
+				_elm_community$parser_combinators$Combine$regex('[^<]+')));
+	});
+var _rnons$elm_svg_parser$SvgParser$SvgElement = function (a) {
+	return {ctor: 'SvgElement', _0: a};
+};
+var _rnons$elm_svg_parser$SvgParser$elementParser = _elm_community$parser_combinators$Combine$lazy(
+	function (_p7) {
+		return A2(
+			_elm_community$parser_combinators$Combine_ops['<$>'],
+			_rnons$elm_svg_parser$SvgParser$SvgElement,
+			A2(
+				_elm_community$parser_combinators$Combine_ops['>>='],
+				A2(_elm_community$parser_combinators$Combine_ops['*>'], _elm_community$parser_combinators$Combine$whitespace, _rnons$elm_svg_parser$SvgParser$openingParser),
+				_rnons$elm_svg_parser$SvgParser$closingOrChildrenParser));
+	});
+var _rnons$elm_svg_parser$SvgParser$closingOrChildrenParser = function (element) {
+	var childrenParser = A2(
+		_elm_community$parser_combinators$Combine_ops['<$>'],
+		function (children) {
+			return _elm_lang$core$Native_Utils.update(
+				element,
+				{children: children});
+		},
+		A2(
+			_elm_community$parser_combinators$Combine_ops['<*'],
+			A2(
+				_elm_community$parser_combinators$Combine_ops['<*'],
+				A2(
+					_elm_community$parser_combinators$Combine_ops['*>'],
+					A2(
+						_elm_community$parser_combinators$Combine_ops['*>'],
+						_elm_community$parser_combinators$Combine$whitespace,
+						_elm_community$parser_combinators$Combine$string('>')),
+					_elm_community$parser_combinators$Combine$many(_rnons$elm_svg_parser$SvgParser$nodeParser)),
+				_elm_community$parser_combinators$Combine$whitespace),
+			_elm_community$parser_combinators$Combine$string(
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'</',
+					A2(_elm_lang$core$Basics_ops['++'], element.name, '>')))));
+	return _elm_community$parser_combinators$Combine$lazy(
+		function (_p8) {
+			return _elm_community$parser_combinators$Combine$choice(
+				{
+					ctor: '::',
+					_0: A2(
+						_elm_community$parser_combinators$Combine_ops['*>'],
+						A2(
+							_elm_community$parser_combinators$Combine_ops['*>'],
+							_elm_community$parser_combinators$Combine$whitespace,
+							_elm_community$parser_combinators$Combine$string('/>')),
+						_elm_community$parser_combinators$Combine$succeed(element)),
+					_1: {
+						ctor: '::',
+						_0: childrenParser,
+						_1: {ctor: '[]'}
+					}
+				});
+		});
+};
+var _rnons$elm_svg_parser$SvgParser$nodeParser = _elm_community$parser_combinators$Combine$lazy(
+	function (_p9) {
+		return _elm_community$parser_combinators$Combine$choice(
+			{
+				ctor: '::',
+				_0: _rnons$elm_svg_parser$SvgParser$textParser,
+				_1: {
+					ctor: '::',
+					_0: _rnons$elm_svg_parser$SvgParser$commentParser,
+					_1: {
+						ctor: '::',
+						_0: _rnons$elm_svg_parser$SvgParser$elementParser,
+						_1: {ctor: '[]'}
+					}
+				}
+			});
+	});
+var _rnons$elm_svg_parser$SvgParser$parseToNode = function (input) {
+	var _p10 = A3(
+		_elm_community$parser_combinators$Combine$runParser,
+		A2(
+			_elm_community$parser_combinators$Combine_ops['*>'],
+			A2(_elm_community$parser_combinators$Combine$optional, '', _rnons$elm_svg_parser$SvgParser$xmlDeclarationParser),
+			_rnons$elm_svg_parser$SvgParser$nodeParser),
+		{ctor: '[]'},
+		input);
+	if (_p10.ctor === 'Ok') {
+		return _elm_lang$core$Result$Ok(_p10._0._2);
+	} else {
+		return _elm_lang$core$Result$Err(
+			A2(_elm_lang$core$String$join, ' or ', _p10._0._2));
+	}
+};
+var _rnons$elm_svg_parser$SvgParser$parse = function (input) {
+	var toHtml = function (svgNode) {
+		var _p11 = svgNode;
+		if (_p11.ctor === 'SvgElement') {
+			var _p12 = _p11._0;
+			return _elm_lang$core$Native_Utils.eq(_p12.name, 'svg') ? _elm_lang$core$Result$Ok(
+				A2(
+					_elm_lang$svg$Svg$svg,
+					A2(_elm_lang$core$List$map, _rnons$elm_svg_parser$SvgParser$toAttribute, _p12.attributes),
+					A2(_elm_lang$core$List$map, _rnons$elm_svg_parser$SvgParser$nodeToSvg, _p12.children))) : _elm_lang$core$Result$Err('Top element is not svg');
+		} else {
+			return _elm_lang$core$Result$Err('Top element is not svg');
+		}
+	};
+	return A2(
+		_elm_lang$core$Result$andThen,
+		toHtml,
+		_rnons$elm_svg_parser$SvgParser$parseToNode(input));
+};

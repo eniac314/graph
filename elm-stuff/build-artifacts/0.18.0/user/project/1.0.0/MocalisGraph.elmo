@@ -1,0 +1,1398 @@
+var _user$project$MocalisGraph$addSubgraphs = F2(
+	function (s, xs) {
+		var makeSubGraph = F2(
+			function (n, xs) {
+				return A2(
+					_elm_lang$core$Basics_ops['++'],
+					'  subgraph cluster_',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(n),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							' {\n',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'  rank = same',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(n),
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										'; ',
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											A2(
+												_elm_lang$core$String$join,
+												'',
+												A2(
+													_elm_lang$core$List$map,
+													function (node) {
+														return A2(_elm_lang$core$Basics_ops['++'], node.label.text, '; ');
+													},
+													xs)),
+											'\n  }\n\n')))))));
+			});
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'\n',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(_elm_lang$core$String$dropRight, 2, s),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'\n',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Tuple$first(
+							A3(
+								_elm_lang$core$List$foldr,
+								F2(
+									function (gs, _p0) {
+										var _p1 = _p0;
+										var _p2 = _p1._1;
+										return {
+											ctor: '_Tuple2',
+											_0: A2(
+												_elm_lang$core$Basics_ops['++'],
+												A2(makeSubGraph, _p2, gs),
+												_p1._0),
+											_1: _p2 + 1
+										};
+									}),
+								{ctor: '_Tuple2', _0: '', _1: 0},
+								xs)),
+						'\n}\n'))));
+	});
+var _user$project$MocalisGraph$trimXml = function (s) {
+	var _p3 = A2(_elm_lang$core$String$indexes, '<svg ', s);
+	if (_p3.ctor === '[]') {
+		return s;
+	} else {
+		return A2(_elm_lang$core$String$dropLeft, _p3._0, s);
+	}
+};
+var _user$project$MocalisGraph$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$classList(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'scale', _1: true},
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				},
+				A3(
+					_elm_lang$core$List$foldr,
+					F2(
+						function (v, acc) {
+							var _p4 = v;
+							if (_p4.ctor === 'Err') {
+								return acc;
+							} else {
+								return {ctor: '::', _0: _p4._0, _1: acc};
+							}
+						}),
+					{ctor: '[]'},
+					A2(_elm_lang$core$List$map, _rnons$elm_svg_parser$SvgParser$parse, model.svgStr))),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$MocalisGraph$portComsStyle = {attrs: 'color = tomato'};
+var _user$project$MocalisGraph$fileInteractStyle = {attrs: 'color = crimson'};
+var _user$project$MocalisGraph$insUpDelComStyle = {attrs: 'color = \"orange:invis:green:invis:deeppink4\", arrowsize = 2'};
+var _user$project$MocalisGraph$delUpComStyle = {attrs: 'color = \"deeppink4:invis:green\", arrowsize = 1.5'};
+var _user$project$MocalisGraph$insDelComStyle = {attrs: 'color = \"deeppink4:invis:orange\", arrowsize = 1.5'};
+var _user$project$MocalisGraph$deleteComStyle = {attrs: 'color = deeppink4'};
+var _user$project$MocalisGraph$insertComStyle = {attrs: 'color = orange'};
+var _user$project$MocalisGraph$selectComStyle = {attrs: 'color = purple'};
+var _user$project$MocalisGraph$updateComStyle = {attrs: 'color = green'};
+var _user$project$MocalisGraph$postComStyle = {attrs: 'color = blue'};
+var _user$project$MocalisGraph$getComStyle = {attrs: 'color = pink'};
+var _user$project$MocalisGraph$htmlStyle = 'fillcolor = 5, style = filled, shape = house';
+var _user$project$MocalisGraph$foldersStyle = 'fillcolor = 4, style = filled, shape = folder';
+var _user$project$MocalisGraph$sqlTableStyle = 'fillcolor = 3, style = filled, shape = cylinder';
+var _user$project$MocalisGraph$phpFileStyle = 'fillcolor = 2, style = filled';
+var _user$project$MocalisGraph$elmComsFilesStyle = 'fillcolor = 1, style = filled, shape = octagon';
+var _user$project$MocalisGraph$communications = {
+	ctor: '::',
+	_0: A3(_elm_community$graph$Graph$Edge, 31, 1, _user$project$MocalisGraph$selectComStyle),
+	_1: {
+		ctor: '::',
+		_0: A3(_elm_community$graph$Graph$Edge, 1, 29, _user$project$MocalisGraph$updateComStyle),
+		_1: {
+			ctor: '::',
+			_0: A3(_elm_community$graph$Graph$Edge, 31, 2, _user$project$MocalisGraph$selectComStyle),
+			_1: {
+				ctor: '::',
+				_0: A3(_elm_community$graph$Graph$Edge, 2, 29, _user$project$MocalisGraph$insertComStyle),
+				_1: {
+					ctor: '::',
+					_0: A3(_elm_community$graph$Graph$Edge, 2, 35, _user$project$MocalisGraph$fileInteractStyle),
+					_1: {
+						ctor: '::',
+						_0: A3(_elm_community$graph$Graph$Edge, 31, 3, _user$project$MocalisGraph$selectComStyle),
+						_1: {
+							ctor: '::',
+							_0: A3(_elm_community$graph$Graph$Edge, 25, 3, _user$project$MocalisGraph$selectComStyle),
+							_1: {
+								ctor: '::',
+								_0: A3(_elm_community$graph$Graph$Edge, 28, 3, _user$project$MocalisGraph$selectComStyle),
+								_1: {
+									ctor: '::',
+									_0: A3(_elm_community$graph$Graph$Edge, 26, 3, _user$project$MocalisGraph$selectComStyle),
+									_1: {
+										ctor: '::',
+										_0: A3(_elm_community$graph$Graph$Edge, 27, 3, _user$project$MocalisGraph$selectComStyle),
+										_1: {
+											ctor: '::',
+											_0: A3(_elm_community$graph$Graph$Edge, 31, 4, _user$project$MocalisGraph$selectComStyle),
+											_1: {
+												ctor: '::',
+												_0: A3(_elm_community$graph$Graph$Edge, 25, 4, _user$project$MocalisGraph$selectComStyle),
+												_1: {
+													ctor: '::',
+													_0: A3(_elm_community$graph$Graph$Edge, 32, 4, _user$project$MocalisGraph$fileInteractStyle),
+													_1: {
+														ctor: '::',
+														_0: A3(_elm_community$graph$Graph$Edge, 31, 5, _user$project$MocalisGraph$selectComStyle),
+														_1: {
+															ctor: '::',
+															_0: A3(_elm_community$graph$Graph$Edge, 25, 5, _user$project$MocalisGraph$selectComStyle),
+															_1: {
+																ctor: '::',
+																_0: A3(_elm_community$graph$Graph$Edge, 33, 5, _user$project$MocalisGraph$fileInteractStyle),
+																_1: {
+																	ctor: '::',
+																	_0: A3(_elm_community$graph$Graph$Edge, 31, 6, _user$project$MocalisGraph$selectComStyle),
+																	_1: {
+																		ctor: '::',
+																		_0: A3(_elm_community$graph$Graph$Edge, 29, 6, _user$project$MocalisGraph$selectComStyle),
+																		_1: {
+																			ctor: '::',
+																			_0: A3(_elm_community$graph$Graph$Edge, 31, 7, _user$project$MocalisGraph$selectComStyle),
+																			_1: {
+																				ctor: '::',
+																				_0: A3(_elm_community$graph$Graph$Edge, 30, 7, _user$project$MocalisGraph$selectComStyle),
+																				_1: {
+																					ctor: '::',
+																					_0: A3(_elm_community$graph$Graph$Edge, 31, 8, _user$project$MocalisGraph$selectComStyle),
+																					_1: {
+																						ctor: '::',
+																						_0: A3(_elm_community$graph$Graph$Edge, 31, 10, _user$project$MocalisGraph$selectComStyle),
+																						_1: {
+																							ctor: '::',
+																							_0: A3(_elm_community$graph$Graph$Edge, 31, 12, _user$project$MocalisGraph$selectComStyle),
+																							_1: {
+																								ctor: '::',
+																								_0: A3(_elm_community$graph$Graph$Edge, 12, 31, _user$project$MocalisGraph$delUpComStyle),
+																								_1: {
+																									ctor: '::',
+																									_0: A3(_elm_community$graph$Graph$Edge, 31, 13, _user$project$MocalisGraph$selectComStyle),
+																									_1: {
+																										ctor: '::',
+																										_0: A3(_elm_community$graph$Graph$Edge, 13, 30, _user$project$MocalisGraph$updateComStyle),
+																										_1: {
+																											ctor: '::',
+																											_0: A3(_elm_community$graph$Graph$Edge, 31, 14, _user$project$MocalisGraph$selectComStyle),
+																											_1: {
+																												ctor: '::',
+																												_0: A3(_elm_community$graph$Graph$Edge, 14, 34, _user$project$MocalisGraph$fileInteractStyle),
+																												_1: {
+																													ctor: '::',
+																													_0: A3(_elm_community$graph$Graph$Edge, 14, 30, _user$project$MocalisGraph$insertComStyle),
+																													_1: {
+																														ctor: '::',
+																														_0: A3(_elm_community$graph$Graph$Edge, 31, 15, _user$project$MocalisGraph$selectComStyle),
+																														_1: {
+																															ctor: '::',
+																															_0: A3(_elm_community$graph$Graph$Edge, 15, 29, _user$project$MocalisGraph$deleteComStyle),
+																															_1: {
+																																ctor: '::',
+																																_0: A3(_elm_community$graph$Graph$Edge, 15, 35, _user$project$MocalisGraph$fileInteractStyle),
+																																_1: {
+																																	ctor: '::',
+																																	_0: A3(_elm_community$graph$Graph$Edge, 31, 16, _user$project$MocalisGraph$selectComStyle),
+																																	_1: {
+																																		ctor: '::',
+																																		_0: A3(_elm_community$graph$Graph$Edge, 16, 30, _user$project$MocalisGraph$deleteComStyle),
+																																		_1: {
+																																			ctor: '::',
+																																			_0: A3(_elm_community$graph$Graph$Edge, 16, 34, _user$project$MocalisGraph$fileInteractStyle),
+																																			_1: {
+																																				ctor: '::',
+																																				_0: A3(_elm_community$graph$Graph$Edge, 31, 17, _user$project$MocalisGraph$selectComStyle),
+																																				_1: {
+																																					ctor: '::',
+																																					_0: A3(_elm_community$graph$Graph$Edge, 17, 32, _user$project$MocalisGraph$fileInteractStyle),
+																																					_1: {
+																																						ctor: '::',
+																																						_0: A3(_elm_community$graph$Graph$Edge, 17, 33, _user$project$MocalisGraph$fileInteractStyle),
+																																						_1: {
+																																							ctor: '::',
+																																							_0: A3(_elm_community$graph$Graph$Edge, 31, 18, _user$project$MocalisGraph$selectComStyle),
+																																							_1: {
+																																								ctor: '::',
+																																								_0: A3(_elm_community$graph$Graph$Edge, 18, 28, _user$project$MocalisGraph$updateComStyle),
+																																								_1: {
+																																									ctor: '::',
+																																									_0: A3(_elm_community$graph$Graph$Edge, 31, 19, _user$project$MocalisGraph$selectComStyle),
+																																									_1: {
+																																										ctor: '::',
+																																										_0: A3(_elm_community$graph$Graph$Edge, 29, 19, _user$project$MocalisGraph$selectComStyle),
+																																										_1: {
+																																											ctor: '::',
+																																											_0: A3(_elm_community$graph$Graph$Edge, 35, 19, _user$project$MocalisGraph$fileInteractStyle),
+																																											_1: {
+																																												ctor: '::',
+																																												_0: A3(_elm_community$graph$Graph$Edge, 31, 20, _user$project$MocalisGraph$selectComStyle),
+																																												_1: {
+																																													ctor: '::',
+																																													_0: A3(_elm_community$graph$Graph$Edge, 30, 20, _user$project$MocalisGraph$selectComStyle),
+																																													_1: {
+																																														ctor: '::',
+																																														_0: A3(_elm_community$graph$Graph$Edge, 34, 20, _user$project$MocalisGraph$fileInteractStyle),
+																																														_1: {
+																																															ctor: '::',
+																																															_0: A3(_elm_community$graph$Graph$Edge, 31, 21, _user$project$MocalisGraph$selectComStyle),
+																																															_1: {
+																																																ctor: '::',
+																																																_0: A3(_elm_community$graph$Graph$Edge, 21, 31, _user$project$MocalisGraph$insertComStyle),
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: A3(_elm_community$graph$Graph$Edge, 31, 23, _user$project$MocalisGraph$selectComStyle),
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: A3(_elm_community$graph$Graph$Edge, 23, 25, _user$project$MocalisGraph$insUpDelComStyle),
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: A3(_elm_community$graph$Graph$Edge, 23, 26, _user$project$MocalisGraph$insDelComStyle),
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: A3(_elm_community$graph$Graph$Edge, 23, 27, _user$project$MocalisGraph$insDelComStyle),
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: A3(_elm_community$graph$Graph$Edge, 36, 17, _user$project$MocalisGraph$postComStyle),
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: A3(_elm_community$graph$Graph$Edge, 4, 36, _user$project$MocalisGraph$postComStyle),
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: A3(_elm_community$graph$Graph$Edge, 5, 36, _user$project$MocalisGraph$postComStyle),
+																																																							_1: {
+																																																								ctor: '::',
+																																																								_0: A3(_elm_community$graph$Graph$Edge, 36, 38, _user$project$MocalisGraph$portComsStyle),
+																																																								_1: {
+																																																									ctor: '::',
+																																																									_0: A3(_elm_community$graph$Graph$Edge, 6, 37, _user$project$MocalisGraph$postComStyle),
+																																																									_1: {
+																																																										ctor: '::',
+																																																										_0: A3(_elm_community$graph$Graph$Edge, 7, 37, _user$project$MocalisGraph$postComStyle),
+																																																										_1: {
+																																																											ctor: '::',
+																																																											_0: A3(_elm_community$graph$Graph$Edge, 37, 16, _user$project$MocalisGraph$postComStyle),
+																																																											_1: {
+																																																												ctor: '::',
+																																																												_0: A3(_elm_community$graph$Graph$Edge, 37, 15, _user$project$MocalisGraph$postComStyle),
+																																																												_1: {
+																																																													ctor: '::',
+																																																													_0: A3(_elm_community$graph$Graph$Edge, 37, 13, _user$project$MocalisGraph$postComStyle),
+																																																													_1: {
+																																																														ctor: '::',
+																																																														_0: A3(_elm_community$graph$Graph$Edge, 37, 1, _user$project$MocalisGraph$postComStyle),
+																																																														_1: {
+																																																															ctor: '::',
+																																																															_0: A3(_elm_community$graph$Graph$Edge, 37, 38, _user$project$MocalisGraph$portComsStyle),
+																																																															_1: {
+																																																																ctor: '::',
+																																																																_0: A3(_elm_community$graph$Graph$Edge, 38, 2, _user$project$MocalisGraph$postComStyle),
+																																																																_1: {
+																																																																	ctor: '::',
+																																																																	_0: A3(_elm_community$graph$Graph$Edge, 38, 14, _user$project$MocalisGraph$postComStyle),
+																																																																	_1: {
+																																																																		ctor: '::',
+																																																																		_0: A3(_elm_community$graph$Graph$Edge, 9, 39, _user$project$MocalisGraph$getComStyle),
+																																																																		_1: {
+																																																																			ctor: '::',
+																																																																			_0: A3(_elm_community$graph$Graph$Edge, 39, 23, _user$project$MocalisGraph$postComStyle),
+																																																																			_1: {
+																																																																				ctor: '::',
+																																																																				_0: A3(_elm_community$graph$Graph$Edge, 10, 40, _user$project$MocalisGraph$getComStyle),
+																																																																				_1: {
+																																																																					ctor: '::',
+																																																																					_0: A3(_elm_community$graph$Graph$Edge, 40, 11, _user$project$MocalisGraph$postComStyle),
+																																																																					_1: {
+																																																																						ctor: '::',
+																																																																						_0: A3(_elm_community$graph$Graph$Edge, 3, 41, _user$project$MocalisGraph$postComStyle),
+																																																																						_1: {
+																																																																							ctor: '::',
+																																																																							_0: A3(_elm_community$graph$Graph$Edge, 41, 18, _user$project$MocalisGraph$postComStyle),
+																																																																							_1: {
+																																																																								ctor: '::',
+																																																																								_0: A3(_elm_community$graph$Graph$Edge, 19, 42, _user$project$MocalisGraph$getComStyle),
+																																																																								_1: {
+																																																																									ctor: '::',
+																																																																									_0: A3(_elm_community$graph$Graph$Edge, 20, 42, _user$project$MocalisGraph$getComStyle),
+																																																																									_1: {
+																																																																										ctor: '::',
+																																																																										_0: A3(_elm_community$graph$Graph$Edge, 43, 21, _user$project$MocalisGraph$postComStyle),
+																																																																										_1: {
+																																																																											ctor: '::',
+																																																																											_0: A3(_elm_community$graph$Graph$Edge, 8, 44, _user$project$MocalisGraph$getComStyle),
+																																																																											_1: {
+																																																																												ctor: '::',
+																																																																												_0: A3(_elm_community$graph$Graph$Edge, 44, 12, _user$project$MocalisGraph$postComStyle),
+																																																																												_1: {ctor: '[]'}
+																																																																											}
+																																																																										}
+																																																																									}
+																																																																								}
+																																																																							}
+																																																																						}
+																																																																					}
+																																																																				}
+																																																																			}
+																																																																		}
+																																																																	}
+																																																																}
+																																																															}
+																																																														}
+																																																													}
+																																																												}
+																																																											}
+																																																										}
+																																																									}
+																																																								}
+																																																							}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$MocalisGraph$htmlFiles = {
+	ctor: '::',
+	_0: A2(
+		_elm_community$graph$Graph$Node,
+		38,
+		{text: 'index.html', attrs: _user$project$MocalisGraph$htmlStyle}),
+	_1: {ctor: '[]'}
+};
+var _user$project$MocalisGraph$folders = {
+	ctor: '::',
+	_0: A2(
+		_elm_community$graph$Graph$Node,
+		32,
+		{text: 'content/raw', attrs: _user$project$MocalisGraph$foldersStyle}),
+	_1: {
+		ctor: '::',
+		_0: A2(
+			_elm_community$graph$Graph$Node,
+			33,
+			{text: 'content/tokens', attrs: _user$project$MocalisGraph$foldersStyle}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_community$graph$Graph$Node,
+				34,
+				{text: 'content/pictures', attrs: _user$project$MocalisGraph$foldersStyle}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_community$graph$Graph$Node,
+					35,
+					{text: 'content/files', attrs: _user$project$MocalisGraph$foldersStyle}),
+				_1: {ctor: '[]'}
+			}
+		}
+	}
+};
+var _user$project$MocalisGraph$sqlTables = {
+	ctor: '::',
+	_0: A2(
+		_elm_community$graph$Graph$Node,
+		25,
+		{text: 'articles', attrs: _user$project$MocalisGraph$sqlTableStyle}),
+	_1: {
+		ctor: '::',
+		_0: A2(
+			_elm_community$graph$Graph$Node,
+			26,
+			{text: 'articlesKeywords', attrs: _user$project$MocalisGraph$sqlTableStyle}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_community$graph$Graph$Node,
+				27,
+				{text: 'articlesTopics', attrs: _user$project$MocalisGraph$sqlTableStyle}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_community$graph$Graph$Node,
+					28,
+					{text: 'bookmarks', attrs: _user$project$MocalisGraph$sqlTableStyle}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_community$graph$Graph$Node,
+						29,
+						{text: 'files', attrs: _user$project$MocalisGraph$sqlTableStyle}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_community$graph$Graph$Node,
+							30,
+							{text: 'pictures', attrs: _user$project$MocalisGraph$sqlTableStyle}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_community$graph$Graph$Node,
+								31,
+								{text: 'users', attrs: _user$project$MocalisGraph$sqlTableStyle}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$MocalisGraph$phpFiles = {
+	ctor: '::',
+	_0: A2(
+		_elm_community$graph$Graph$Node,
+		1,
+		{text: 'filesPermUpload', attrs: _user$project$MocalisGraph$phpFileStyle}),
+	_1: {
+		ctor: '::',
+		_0: A2(
+			_elm_community$graph$Graph$Node,
+			2,
+			{text: 'filesUpload', attrs: _user$project$MocalisGraph$phpFileStyle}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_community$graph$Graph$Node,
+				3,
+				{text: 'getArticles', attrs: _user$project$MocalisGraph$phpFileStyle}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_community$graph$Graph$Node,
+					4,
+					{text: 'getContentRaw', attrs: _user$project$MocalisGraph$phpFileStyle}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_community$graph$Graph$Node,
+						5,
+						{text: 'getContentTok', attrs: _user$project$MocalisGraph$phpFileStyle}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_community$graph$Graph$Node,
+							6,
+							{text: 'getFiles', attrs: _user$project$MocalisGraph$phpFileStyle}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_community$graph$Graph$Node,
+								7,
+								{text: 'getPictures', attrs: _user$project$MocalisGraph$phpFileStyle}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_community$graph$Graph$Node,
+									8,
+									{text: 'getusers', attrs: _user$project$MocalisGraph$phpFileStyle}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_community$graph$Graph$Node,
+										9,
+										{text: 'getUUID', attrs: _user$project$MocalisGraph$phpFileStyle}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_community$graph$Graph$Node,
+											10,
+											{text: 'login', attrs: _user$project$MocalisGraph$phpFileStyle}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_community$graph$Graph$Node,
+												11,
+												{text: 'logout', attrs: _user$project$MocalisGraph$phpFileStyle}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_community$graph$Graph$Node,
+													12,
+													{text: 'manageusers', attrs: _user$project$MocalisGraph$phpFileStyle}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_community$graph$Graph$Node,
+														13,
+														{text: 'picsPermUpload', attrs: _user$project$MocalisGraph$phpFileStyle}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_community$graph$Graph$Node,
+															14,
+															{text: 'picsUpload', attrs: _user$project$MocalisGraph$phpFileStyle}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_community$graph$Graph$Node,
+																15,
+																{text: 'removeFiles', attrs: _user$project$MocalisGraph$phpFileStyle}),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_elm_community$graph$Graph$Node,
+																	16,
+																	{text: 'removePics', attrs: _user$project$MocalisGraph$phpFileStyle}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_elm_community$graph$Graph$Node,
+																		17,
+																		{text: 'saveContent', attrs: _user$project$MocalisGraph$phpFileStyle}),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(
+																			_elm_community$graph$Graph$Node,
+																			18,
+																			{text: 'setBookmark', attrs: _user$project$MocalisGraph$phpFileStyle}),
+																		_1: {
+																			ctor: '::',
+																			_0: A2(
+																				_elm_community$graph$Graph$Node,
+																				19,
+																				{text: 'showFile', attrs: _user$project$MocalisGraph$phpFileStyle}),
+																			_1: {
+																				ctor: '::',
+																				_0: A2(
+																					_elm_community$graph$Graph$Node,
+																					20,
+																					{text: 'showPic', attrs: _user$project$MocalisGraph$phpFileStyle}),
+																				_1: {
+																					ctor: '::',
+																					_0: A2(
+																						_elm_community$graph$Graph$Node,
+																						21,
+																						{text: 'signup', attrs: _user$project$MocalisGraph$phpFileStyle}),
+																					_1: {
+																						ctor: '::',
+																						_0: A2(
+																							_elm_community$graph$Graph$Node,
+																							23,
+																							{text: 'updateFileSys', attrs: _user$project$MocalisGraph$phpFileStyle}),
+																						_1: {ctor: '[]'}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$MocalisGraph$elmComsFiles = {
+	ctor: '::',
+	_0: A2(
+		_elm_community$graph$Graph$Node,
+		36,
+		{text: 'BlogEntry', attrs: _user$project$MocalisGraph$elmComsFilesStyle}),
+	_1: {
+		ctor: '::',
+		_0: A2(
+			_elm_community$graph$Graph$Node,
+			37,
+			{text: 'Dropzone', attrs: _user$project$MocalisGraph$elmComsFilesStyle}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_community$graph$Graph$Node,
+				39,
+				{text: 'FileSysEdit', attrs: _user$project$MocalisGraph$elmComsFilesStyle}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_community$graph$Graph$Node,
+					40,
+					{text: 'Login', attrs: _user$project$MocalisGraph$elmComsFilesStyle}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_community$graph$Graph$Node,
+						41,
+						{text: 'Rosette', attrs: _user$project$MocalisGraph$elmComsFilesStyle}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_community$graph$Graph$Node,
+							42,
+							{text: 'Parser', attrs: _user$project$MocalisGraph$elmComsFilesStyle}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_community$graph$Graph$Node,
+								43,
+								{text: 'Signup', attrs: _user$project$MocalisGraph$elmComsFilesStyle}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_community$graph$Graph$Node,
+									44,
+									{text: 'UsrManager', attrs: _user$project$MocalisGraph$elmComsFilesStyle}),
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$MocalisGraph$comsNodes = A2(
+	_elm_lang$core$Basics_ops['++'],
+	_user$project$MocalisGraph$elmComsFiles,
+	A2(
+		_elm_lang$core$Basics_ops['++'],
+		_user$project$MocalisGraph$phpFiles,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			_user$project$MocalisGraph$sqlTables,
+			A2(_elm_lang$core$Basics_ops['++'], _user$project$MocalisGraph$folders, _user$project$MocalisGraph$htmlFiles))));
+var _user$project$MocalisGraph$comsGraph = A2(_elm_community$graph$Graph$fromNodesAndEdges, _user$project$MocalisGraph$comsNodes, _user$project$MocalisGraph$communications);
+var _user$project$MocalisGraph$blogStyle = 'color = 4, style = filled';
+var _user$project$MocalisGraph$helperStyle = 'color = 3, style = filled';
+var _user$project$MocalisGraph$userAccountsStyle = 'color = 2, style = filled';
+var _user$project$MocalisGraph$mainStyle = 'color = 1, style = filled';
+var _user$project$MocalisGraph$topStylesTB = _elm_lang$core$Native_Utils.update(
+	_elm_community$graph$Graph_GraphViz$defaultStyles,
+	{rankdir: _elm_community$graph$Graph_GraphViz$TB, node: 'shape = box, colorscheme = accent5'});
+var _user$project$MocalisGraph$comsGraphStr = function (s) {
+	return A2(
+		_user$project$MocalisGraph$addSubgraphs,
+		s,
+		{ctor: '[]'});
+}(
+	A2(_elm_community$graph$Graph_GraphViz$outputWithStylesWithOverrides, _user$project$MocalisGraph$topStylesTB, _user$project$MocalisGraph$comsGraph));
+var _user$project$MocalisGraph$topStylesBT = _elm_lang$core$Native_Utils.update(
+	_elm_community$graph$Graph_GraphViz$defaultStyles,
+	{rankdir: _elm_community$graph$Graph_GraphViz$BT, node: 'shape = box, colorscheme = brbg4'});
+var _user$project$MocalisGraph$mainImports = {
+	ctor: '::',
+	_0: A3(
+		_elm_community$graph$Graph$Edge,
+		2,
+		1,
+		{attrs: ''}),
+	_1: {
+		ctor: '::',
+		_0: A3(
+			_elm_community$graph$Graph$Edge,
+			3,
+			1,
+			{attrs: ''}),
+		_1: {
+			ctor: '::',
+			_0: A3(
+				_elm_community$graph$Graph$Edge,
+				4,
+				1,
+				{attrs: ''}),
+			_1: {
+				ctor: '::',
+				_0: A3(
+					_elm_community$graph$Graph$Edge,
+					5,
+					3,
+					{attrs: ''}),
+				_1: {
+					ctor: '::',
+					_0: A3(
+						_elm_community$graph$Graph$Edge,
+						6,
+						3,
+						{attrs: ''}),
+					_1: {
+						ctor: '::',
+						_0: A3(
+							_elm_community$graph$Graph$Edge,
+							7,
+							3,
+							{attrs: ''}),
+						_1: {
+							ctor: '::',
+							_0: A3(
+								_elm_community$graph$Graph$Edge,
+								8,
+								3,
+								{attrs: ''}),
+							_1: {
+								ctor: '::',
+								_0: A3(
+									_elm_community$graph$Graph$Edge,
+									9,
+									3,
+									{attrs: ''}),
+								_1: {
+									ctor: '::',
+									_0: A3(
+										_elm_community$graph$Graph$Edge,
+										11,
+										4,
+										{attrs: ''}),
+									_1: {
+										ctor: '::',
+										_0: A3(
+											_elm_community$graph$Graph$Edge,
+											12,
+											4,
+											{attrs: ''}),
+										_1: {
+											ctor: '::',
+											_0: A3(
+												_elm_community$graph$Graph$Edge,
+												13,
+												4,
+												{attrs: ''}),
+											_1: {
+												ctor: '::',
+												_0: A3(
+													_elm_community$graph$Graph$Edge,
+													14,
+													4,
+													{attrs: ''}),
+												_1: {
+													ctor: '::',
+													_0: A3(
+														_elm_community$graph$Graph$Edge,
+														3,
+														4,
+														{attrs: ''}),
+													_1: {
+														ctor: '::',
+														_0: A3(
+															_elm_community$graph$Graph$Edge,
+															9,
+															4,
+															{attrs: ''}),
+														_1: {
+															ctor: '::',
+															_0: A3(
+																_elm_community$graph$Graph$Edge,
+																5,
+																4,
+																{attrs: ''}),
+															_1: {
+																ctor: '::',
+																_0: A3(
+																	_elm_community$graph$Graph$Edge,
+																	16,
+																	4,
+																	{attrs: ''}),
+																_1: {
+																	ctor: '::',
+																	_0: A3(
+																		_elm_community$graph$Graph$Edge,
+																		2,
+																		5,
+																		{attrs: ''}),
+																	_1: {
+																		ctor: '::',
+																		_0: A3(
+																			_elm_community$graph$Graph$Edge,
+																			2,
+																			6,
+																			{attrs: ''}),
+																		_1: {
+																			ctor: '::',
+																			_0: A3(
+																				_elm_community$graph$Graph$Edge,
+																				5,
+																				6,
+																				{attrs: ''}),
+																			_1: {
+																				ctor: '::',
+																				_0: A3(
+																					_elm_community$graph$Graph$Edge,
+																					9,
+																					6,
+																					{attrs: ''}),
+																				_1: {
+																					ctor: '::',
+																					_0: A3(
+																						_elm_community$graph$Graph$Edge,
+																						2,
+																						7,
+																						{attrs: ''}),
+																					_1: {
+																						ctor: '::',
+																						_0: A3(
+																							_elm_community$graph$Graph$Edge,
+																							5,
+																							7,
+																							{attrs: ''}),
+																						_1: {
+																							ctor: '::',
+																							_0: A3(
+																								_elm_community$graph$Graph$Edge,
+																								9,
+																								7,
+																								{attrs: ''}),
+																							_1: {
+																								ctor: '::',
+																								_0: A3(
+																									_elm_community$graph$Graph$Edge,
+																									2,
+																									8,
+																									{attrs: ''}),
+																								_1: {
+																									ctor: '::',
+																									_0: A3(
+																										_elm_community$graph$Graph$Edge,
+																										5,
+																										8,
+																										{attrs: ''}),
+																									_1: {
+																										ctor: '::',
+																										_0: A3(
+																											_elm_community$graph$Graph$Edge,
+																											9,
+																											8,
+																											{attrs: ''}),
+																										_1: {
+																											ctor: '::',
+																											_0: A3(
+																												_elm_community$graph$Graph$Edge,
+																												10,
+																												8,
+																												{attrs: ''}),
+																											_1: {
+																												ctor: '::',
+																												_0: A3(
+																													_elm_community$graph$Graph$Edge,
+																													2,
+																													9,
+																													{attrs: ''}),
+																												_1: {
+																													ctor: '::',
+																													_0: A3(
+																														_elm_community$graph$Graph$Edge,
+																														9,
+																														11,
+																														{attrs: ''}),
+																													_1: {
+																														ctor: '::',
+																														_0: A3(
+																															_elm_community$graph$Graph$Edge,
+																															5,
+																															11,
+																															{attrs: ''}),
+																														_1: {
+																															ctor: '::',
+																															_0: A3(
+																																_elm_community$graph$Graph$Edge,
+																																9,
+																																12,
+																																{attrs: ''}),
+																															_1: {
+																																ctor: '::',
+																																_0: A3(
+																																	_elm_community$graph$Graph$Edge,
+																																	3,
+																																	12,
+																																	{attrs: ''}),
+																																_1: {
+																																	ctor: '::',
+																																	_0: A3(
+																																		_elm_community$graph$Graph$Edge,
+																																		10,
+																																		12,
+																																		{attrs: ''}),
+																																	_1: {
+																																		ctor: '::',
+																																		_0: A3(
+																																			_elm_community$graph$Graph$Edge,
+																																			11,
+																																			12,
+																																			{attrs: ''}),
+																																		_1: {
+																																			ctor: '::',
+																																			_0: A3(
+																																				_elm_community$graph$Graph$Edge,
+																																				15,
+																																				12,
+																																				{attrs: ''}),
+																																			_1: {
+																																				ctor: '::',
+																																				_0: A3(
+																																					_elm_community$graph$Graph$Edge,
+																																					9,
+																																					13,
+																																					{attrs: ''}),
+																																				_1: {
+																																					ctor: '::',
+																																					_0: A3(
+																																						_elm_community$graph$Graph$Edge,
+																																						10,
+																																						13,
+																																						{attrs: ''}),
+																																					_1: {
+																																						ctor: '::',
+																																						_0: A3(
+																																							_elm_community$graph$Graph$Edge,
+																																							3,
+																																							13,
+																																							{attrs: ''}),
+																																						_1: {
+																																							ctor: '::',
+																																							_0: A3(
+																																								_elm_community$graph$Graph$Edge,
+																																								11,
+																																								14,
+																																								{attrs: ''}),
+																																							_1: {
+																																								ctor: '::',
+																																								_0: A3(
+																																									_elm_community$graph$Graph$Edge,
+																																									9,
+																																									14,
+																																									{attrs: ''}),
+																																								_1: {
+																																									ctor: '::',
+																																									_0: A3(
+																																										_elm_community$graph$Graph$Edge,
+																																										11,
+																																										15,
+																																										{attrs: ''}),
+																																									_1: {
+																																										ctor: '::',
+																																										_0: A3(
+																																											_elm_community$graph$Graph$Edge,
+																																											10,
+																																											15,
+																																											{attrs: ''}),
+																																										_1: {
+																																											ctor: '::',
+																																											_0: A3(
+																																												_elm_community$graph$Graph$Edge,
+																																												9,
+																																												15,
+																																												{attrs: ''}),
+																																											_1: {
+																																												ctor: '::',
+																																												_0: A3(
+																																													_elm_community$graph$Graph$Edge,
+																																													3,
+																																													15,
+																																													{attrs: ''}),
+																																												_1: {
+																																													ctor: '::',
+																																													_0: A3(
+																																														_elm_community$graph$Graph$Edge,
+																																														17,
+																																														16,
+																																														{attrs: ''}),
+																																													_1: {
+																																														ctor: '::',
+																																														_0: A3(
+																																															_elm_community$graph$Graph$Edge,
+																																															18,
+																																															16,
+																																															{attrs: ''}),
+																																														_1: {
+																																															ctor: '::',
+																																															_0: A3(
+																																																_elm_community$graph$Graph$Edge,
+																																																19,
+																																																16,
+																																																{attrs: ''}),
+																																															_1: {
+																																																ctor: '::',
+																																																_0: A3(
+																																																	_elm_community$graph$Graph$Edge,
+																																																	11,
+																																																	16,
+																																																	{attrs: ''}),
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: A3(
+																																																		_elm_community$graph$Graph$Edge,
+																																																		10,
+																																																		16,
+																																																		{attrs: ''}),
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: A3(
+																																																			_elm_community$graph$Graph$Edge,
+																																																			9,
+																																																			16,
+																																																			{attrs: ''}),
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: A3(
+																																																				_elm_community$graph$Graph$Edge,
+																																																				3,
+																																																				16,
+																																																				{attrs: ''}),
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: A3(
+																																																					_elm_community$graph$Graph$Edge,
+																																																					18,
+																																																					17,
+																																																					{attrs: ''}),
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: A3(
+																																																						_elm_community$graph$Graph$Edge,
+																																																						17,
+																																																						19,
+																																																						{attrs: ''}),
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: A3(
+																																																							_elm_community$graph$Graph$Edge,
+																																																							18,
+																																																							19,
+																																																							{attrs: ''}),
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: A3(
+																																																								_elm_community$graph$Graph$Edge,
+																																																								9,
+																																																								19,
+																																																								{attrs: ''}),
+																																																							_1: {ctor: '[]'}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$MocalisGraph$mainFiles = {
+	ctor: '::',
+	_0: A2(
+		_elm_community$graph$Graph$Node,
+		1,
+		{text: 'Main', attrs: _user$project$MocalisGraph$mainStyle}),
+	_1: {
+		ctor: '::',
+		_0: A2(
+			_elm_community$graph$Graph$Node,
+			2,
+			{text: 'MultLangText', attrs: _user$project$MocalisGraph$helperStyle}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_community$graph$Graph$Node,
+				9,
+				{text: 'Utils', attrs: _user$project$MocalisGraph$helperStyle}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_community$graph$Graph$Node,
+					10,
+					{text: 'Combox', attrs: _user$project$MocalisGraph$helperStyle}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_community$graph$Graph$Node,
+						3,
+						{text: 'UserAccounts', attrs: _user$project$MocalisGraph$userAccountsStyle}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_community$graph$Graph$Node,
+							5,
+							{text: 'UserAccountsTypes', attrs: _user$project$MocalisGraph$userAccountsStyle}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_community$graph$Graph$Node,
+								6,
+								{text: 'Login', attrs: _user$project$MocalisGraph$userAccountsStyle}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_community$graph$Graph$Node,
+									7,
+									{text: 'Signup', attrs: _user$project$MocalisGraph$userAccountsStyle}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_community$graph$Graph$Node,
+										8,
+										{text: 'UsrManager', attrs: _user$project$MocalisGraph$userAccountsStyle}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_community$graph$Graph$Node,
+											4,
+											{text: 'Rosette', attrs: _user$project$MocalisGraph$mainStyle}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_community$graph$Graph$Node,
+												11,
+												{text: 'Filesys', attrs: _user$project$MocalisGraph$helperStyle}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_community$graph$Graph$Node,
+													12,
+													{text: 'FileSysEdit', attrs: _user$project$MocalisGraph$mainStyle}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_community$graph$Graph$Node,
+														13,
+														{text: 'Dropzone', attrs: _user$project$MocalisGraph$mainStyle}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_community$graph$Graph$Node,
+															14,
+															{text: 'SearchEngine', attrs: _user$project$MocalisGraph$mainStyle}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_community$graph$Graph$Node,
+																15,
+																{text: 'MetadataEdit', attrs: _user$project$MocalisGraph$mainStyle}),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_elm_community$graph$Graph$Node,
+																	16,
+																	{text: 'BlogEntry', attrs: _user$project$MocalisGraph$blogStyle}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_elm_community$graph$Graph$Node,
+																		17,
+																		{text: 'BetterParser', attrs: _user$project$MocalisGraph$blogStyle}),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(
+																			_elm_community$graph$Graph$Node,
+																			18,
+																			{text: 'Tokenizer', attrs: _user$project$MocalisGraph$blogStyle}),
+																		_1: {
+																			ctor: '::',
+																			_0: A2(
+																				_elm_community$graph$Graph$Node,
+																				19,
+																				{text: 'Parser', attrs: _user$project$MocalisGraph$blogStyle}),
+																			_1: {ctor: '[]'}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$MocalisGraph$mainGraph = A2(_elm_community$graph$Graph$fromNodesAndEdges, _user$project$MocalisGraph$mainFiles, _user$project$MocalisGraph$mainImports);
+var _user$project$MocalisGraph$mainGraphStr = A2(_elm_community$graph$Graph_GraphViz$outputWithStylesWithOverrides, _user$project$MocalisGraph$topStylesBT, _user$project$MocalisGraph$mainGraph);
+var _user$project$MocalisGraph$toRender = _elm_lang$core$Native_Platform.outgoingPort(
+	'toRender',
+	function (v) {
+		return v;
+	});
+var _user$project$MocalisGraph$init = function () {
+	var graphs = {
+		ctor: '::',
+		_0: _user$project$MocalisGraph$mainGraphStr,
+		_1: {
+			ctor: '::',
+			_0: _user$project$MocalisGraph$comsGraphStr,
+			_1: {ctor: '[]'}
+		}
+	};
+	return A2(
+		_elm_lang$core$Platform_Cmd_ops['!'],
+		{
+			graphVizStr: graphs,
+			svgStr: {ctor: '[]'}
+		},
+		A2(_elm_lang$core$List$map, _user$project$MocalisGraph$toRender, graphs));
+}();
+var _user$project$MocalisGraph$update = F2(
+	function (msg, model) {
+		var _p5 = msg;
+		if (_p5.ctor === 'SvgStr') {
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_elm_lang$core$Native_Utils.update(
+					model,
+					{
+						svgStr: {
+							ctor: '::',
+							_0: _user$project$MocalisGraph$trimXml(_p5._0),
+							_1: model.svgStr
+						}
+					}),
+				{ctor: '[]'});
+		} else {
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				model,
+				A2(_elm_lang$core$List$map, _user$project$MocalisGraph$toRender, model.graphVizStr));
+		}
+	});
+var _user$project$MocalisGraph$svgStrSub = _elm_lang$core$Native_Platform.incomingPort('svgStrSub', _elm_lang$core$Json_Decode$string);
+var _user$project$MocalisGraph$Model = F2(
+	function (a, b) {
+		return {graphVizStr: a, svgStr: b};
+	});
+var _user$project$MocalisGraph$Parse = {ctor: 'Parse'};
+var _user$project$MocalisGraph$SvgStr = function (a) {
+	return {ctor: 'SvgStr', _0: a};
+};
+var _user$project$MocalisGraph$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$batch(
+		{
+			ctor: '::',
+			_0: _user$project$MocalisGraph$svgStrSub(_user$project$MocalisGraph$SvgStr),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$MocalisGraph$main = _elm_lang$html$Html$program(
+	{init: _user$project$MocalisGraph$init, update: _user$project$MocalisGraph$update, view: _user$project$MocalisGraph$view, subscriptions: _user$project$MocalisGraph$subscriptions})();

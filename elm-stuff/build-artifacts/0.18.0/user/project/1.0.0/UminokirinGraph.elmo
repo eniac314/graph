@@ -1,0 +1,1703 @@
+var _user$project$UminokirinGraph$addSubgraphs = F2(
+	function (s, xs) {
+		var makeSubGraph = F2(
+			function (n, xs) {
+				return A2(
+					_elm_lang$core$Basics_ops['++'],
+					'  subgraph cluster_',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(n),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							' {\n',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'  rank = same',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(n),
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										'; ',
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											A2(
+												_elm_lang$core$String$join,
+												'',
+												A2(
+													_elm_lang$core$List$map,
+													function (node) {
+														return A2(_elm_lang$core$Basics_ops['++'], node.label.text, '; ');
+													},
+													xs)),
+											'\n  }\n\n')))))));
+			});
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'\n',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(_elm_lang$core$String$dropRight, 2, s),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'\n',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Tuple$first(
+							A3(
+								_elm_lang$core$List$foldr,
+								F2(
+									function (gs, _p0) {
+										var _p1 = _p0;
+										var _p2 = _p1._1;
+										return {
+											ctor: '_Tuple2',
+											_0: A2(
+												_elm_lang$core$Basics_ops['++'],
+												A2(makeSubGraph, _p2, gs),
+												_p1._0),
+											_1: _p2 + 1
+										};
+									}),
+								{ctor: '_Tuple2', _0: '', _1: 0},
+								xs)),
+						'\n}\n'))));
+	});
+var _user$project$UminokirinGraph$trimXml = function (s) {
+	var _p3 = A2(_elm_lang$core$String$indexes, '<svg ', s);
+	if (_p3.ctor === '[]') {
+		return s;
+	} else {
+		return A2(_elm_lang$core$String$dropLeft, _p3._0, s);
+	}
+};
+var _user$project$UminokirinGraph$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$classList(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'scale', _1: true},
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				},
+				A3(
+					_elm_lang$core$List$foldr,
+					F2(
+						function (v, acc) {
+							var _p4 = v;
+							if (_p4.ctor === 'Err') {
+								return acc;
+							} else {
+								return {ctor: '::', _0: _p4._0, _1: acc};
+							}
+						}),
+					{ctor: '[]'},
+					A2(_elm_lang$core$List$map, _rnons$elm_svg_parser$SvgParser$parse, model.svgStr))),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$UminokirinGraph$makeGraph = F5(
+	function (nodesData, edgesData, makeNode, edgeColor, topStyle) {
+		var nodes = _elm_lang$core$Tuple$first(
+			A3(
+				_elm_lang$core$List$foldr,
+				F2(
+					function (n, _p5) {
+						var _p6 = _p5;
+						var _p7 = _p6._1;
+						return {
+							ctor: '_Tuple2',
+							_0: {
+								ctor: '::',
+								_0: A2(makeNode, n, _p7),
+								_1: _p6._0
+							},
+							_1: _p7 + 1
+						};
+					}),
+				{
+					ctor: '_Tuple2',
+					_0: {ctor: '[]'},
+					_1: 0
+				},
+				nodesData));
+		var edgeAttrs = function (xs) {
+			var _p8 = xs;
+			if ((_p8.ctor === '::') && (_p8._1.ctor === '[]')) {
+				return {
+					attrs: A2(
+						_elm_lang$core$Basics_ops['++'],
+						'color = ',
+						edgeColor(_p8._0))
+				};
+			} else {
+				return function (cstr) {
+					return {
+						attrs: A2(
+							_elm_lang$core$Basics_ops['++'],
+							'color = ',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								cstr,
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									', arrowsize = ',
+									_elm_lang$core$Basics$toString(
+										0.5 + (0.5 * _elm_lang$core$Basics$toFloat(
+											_elm_lang$core$List$length(xs)))))))
+					};
+				}(
+					function (cs) {
+						return A2(
+							_elm_lang$core$Basics_ops['++'],
+							'\"',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								A2(_elm_lang$core$String$join, '', cs),
+								'\"'));
+					}(
+						A2(
+							_elm_lang$core$List$intersperse,
+							':invis:',
+							A2(_elm_lang$core$List$map, edgeColor, xs))));
+			}
+		};
+		var index = _elm_lang$core$Dict$fromList(
+			_elm_lang$core$Tuple$second(
+				A3(
+					_elm_lang$core$List$foldr,
+					F2(
+						function (node, _p9) {
+							var _p10 = _p9;
+							var _p11 = _p10._0;
+							return {
+								ctor: '_Tuple2',
+								_0: _p11 + 1,
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: node, _1: _p11},
+									_1: _p10._1
+								}
+							};
+						}),
+					{
+						ctor: '_Tuple2',
+						_0: 0,
+						_1: {ctor: '[]'}
+					},
+					A2(
+						_elm_lang$core$List$map,
+						function (_p12) {
+							return function (_) {
+								return _.text;
+							}(
+								function (_) {
+									return _.label;
+								}(_p12));
+						},
+						nodes))));
+		var makeEdge = function (_p13) {
+			var _p14 = _p13;
+			var _p15 = {
+				ctor: '_Tuple2',
+				_0: A2(_elm_lang$core$Dict$get, _p14._0, index),
+				_1: A2(_elm_lang$core$Dict$get, _p14._1, index)
+			};
+			if (((_p15.ctor === '_Tuple2') && (_p15._0.ctor === 'Just')) && (_p15._1.ctor === 'Just')) {
+				return _elm_lang$core$Maybe$Just(
+					A3(
+						_elm_community$graph$Graph$Edge,
+						_p15._0._0,
+						_p15._1._0,
+						edgeAttrs(_p14._2)));
+			} else {
+				return _elm_lang$core$Maybe$Nothing;
+			}
+		};
+		var edges = A2(_elm_lang$core$List$filterMap, makeEdge, edgesData);
+		var graph = A2(_elm_community$graph$Graph$fromNodesAndEdges, nodes, edges);
+		return function (s) {
+			return A2(
+				_user$project$UminokirinGraph$addSubgraphs,
+				s,
+				{ctor: '[]'});
+		}(
+			A2(_elm_community$graph$Graph_GraphViz$outputWithStylesWithOverrides, topStyle, graph));
+	});
+var _user$project$UminokirinGraph$htmlStyle = 'fillcolor = 5, style = filled, shape = house';
+var _user$project$UminokirinGraph$foldersStyle = 'fillcolor = 4, style = filled, shape = folder';
+var _user$project$UminokirinGraph$sqlTableStyle = 'fillcolor = 3, style = filled, shape = cylinder';
+var _user$project$UminokirinGraph$phpFileStyle = 'fillcolor = 2, style = filled';
+var _user$project$UminokirinGraph$elmComsFileStyle = 'fillcolor = 1, style = filled, shape = octagon';
+var _user$project$UminokirinGraph$topStylesTB = _elm_lang$core$Native_Utils.update(
+	_elm_community$graph$Graph_GraphViz$defaultStyles,
+	{rankdir: _elm_community$graph$Graph_GraphViz$TB, node: 'shape = box, colorscheme = accent5'});
+var _user$project$UminokirinGraph$comEdgeColor = function (e) {
+	var _p16 = e;
+	switch (_p16.ctor) {
+		case 'GetEdge':
+			return 'pink';
+		case 'PostEdge':
+			return 'blue';
+		case 'UpdateEdge':
+			return 'green';
+		case 'SelectEdge':
+			return 'purple';
+		case 'InsertEdge':
+			return 'orange';
+		case 'Delete':
+			return 'deeppink4';
+		case 'FileInteract':
+			return 'crimson';
+		default:
+			return 'tomato';
+	}
+};
+var _user$project$UminokirinGraph$makeComNode = F2(
+	function (node, n) {
+		var _p17 = node;
+		switch (_p17.ctor) {
+			case 'PhpNode':
+				return A2(
+					_elm_community$graph$Graph$Node,
+					n,
+					{text: _p17._0, attrs: _user$project$UminokirinGraph$phpFileStyle});
+			case 'ElmNode':
+				return A2(
+					_elm_community$graph$Graph$Node,
+					n,
+					{text: _p17._0, attrs: _user$project$UminokirinGraph$elmComsFileStyle});
+			case 'SqlTableNode':
+				return A2(
+					_elm_community$graph$Graph$Node,
+					n,
+					{text: _p17._0, attrs: _user$project$UminokirinGraph$sqlTableStyle});
+			case 'HtmlNode':
+				return A2(
+					_elm_community$graph$Graph$Node,
+					n,
+					{text: _p17._0, attrs: _user$project$UminokirinGraph$htmlStyle});
+			default:
+				return A2(
+					_elm_community$graph$Graph$Node,
+					n,
+					{text: _p17._0, attrs: _user$project$UminokirinGraph$foldersStyle});
+		}
+	});
+var _user$project$UminokirinGraph$usrAccntsFileStyle = 'fillcolor = 5, style = filled, shape = house';
+var _user$project$UminokirinGraph$kanjiFileStyle = 'fillcolor = 4, style = filled, shape = folder';
+var _user$project$UminokirinGraph$kanaFileStyle = 'fillcolor = 3, style = filled, shape = cylinder';
+var _user$project$UminokirinGraph$writingFileStyle = 'fillcolor = 2, style = filled';
+var _user$project$UminokirinGraph$mainFileStyle = 'fillcolor = 1, style = filled, shape = octagon';
+var _user$project$UminokirinGraph$topStylesBT = _elm_lang$core$Native_Utils.update(
+	_elm_community$graph$Graph_GraphViz$defaultStyles,
+	{rankdir: _elm_community$graph$Graph_GraphViz$BT, node: 'shape = box, colorscheme = accent5'});
+var _user$project$UminokirinGraph$importEdgeColor = function (e) {
+	return 'black';
+};
+var _user$project$UminokirinGraph$makeImportNode = F2(
+	function (node, n) {
+		var _p18 = node;
+		switch (_p18.ctor) {
+			case 'Main':
+				return A2(
+					_elm_community$graph$Graph$Node,
+					n,
+					{text: _p18._0, attrs: _user$project$UminokirinGraph$mainFileStyle});
+			case 'Writing':
+				return A2(
+					_elm_community$graph$Graph$Node,
+					n,
+					{text: _p18._0, attrs: _user$project$UminokirinGraph$writingFileStyle});
+			case 'Kana':
+				return A2(
+					_elm_community$graph$Graph$Node,
+					n,
+					{text: _p18._0, attrs: _user$project$UminokirinGraph$kanaFileStyle});
+			case 'Kanji':
+				return A2(
+					_elm_community$graph$Graph$Node,
+					n,
+					{text: _p18._0, attrs: _user$project$UminokirinGraph$kanjiFileStyle});
+			default:
+				return A2(
+					_elm_community$graph$Graph$Node,
+					n,
+					{text: _p18._0, attrs: _user$project$UminokirinGraph$usrAccntsFileStyle});
+		}
+	});
+var _user$project$UminokirinGraph$toRender = _elm_lang$core$Native_Platform.outgoingPort(
+	'toRender',
+	function (v) {
+		return v;
+	});
+var _user$project$UminokirinGraph$update = F2(
+	function (msg, model) {
+		var _p19 = msg;
+		if (_p19.ctor === 'SvgStr') {
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_elm_lang$core$Native_Utils.update(
+					model,
+					{
+						svgStr: {
+							ctor: '::',
+							_0: _user$project$UminokirinGraph$trimXml(_p19._0),
+							_1: model.svgStr
+						}
+					}),
+				{ctor: '[]'});
+		} else {
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				model,
+				A2(_elm_lang$core$List$map, _user$project$UminokirinGraph$toRender, model.graphVizStr));
+		}
+	});
+var _user$project$UminokirinGraph$svgStrSub = _elm_lang$core$Native_Platform.incomingPort('svgStrSub', _elm_lang$core$Json_Decode$string);
+var _user$project$UminokirinGraph$Model = F2(
+	function (a, b) {
+		return {graphVizStr: a, svgStr: b};
+	});
+var _user$project$UminokirinGraph$UserAccounts = function (a) {
+	return {ctor: 'UserAccounts', _0: a};
+};
+var _user$project$UminokirinGraph$usrAccntsFiles = A2(
+	_elm_lang$core$List$map,
+	_user$project$UminokirinGraph$UserAccounts,
+	{
+		ctor: '::',
+		_0: 'UserAccounts.Utils',
+		_1: {
+			ctor: '::',
+			_0: 'UserAccounts.UsrManager',
+			_1: {
+				ctor: '::',
+				_0: 'UserAccounts.UserAccountsTypes',
+				_1: {
+					ctor: '::',
+					_0: 'UserAccounts.UserAccounts',
+					_1: {
+						ctor: '::',
+						_0: 'UserAccounts.Signup',
+						_1: {
+							ctor: '::',
+							_0: 'UserAccounts.MultLangText',
+							_1: {
+								ctor: '::',
+								_0: 'UserAccounts.Login',
+								_1: {
+									ctor: '::',
+									_0: 'UserAccounts.ComBox',
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _user$project$UminokirinGraph$Kanji = function (a) {
+	return {ctor: 'Kanji', _0: a};
+};
+var _user$project$UminokirinGraph$kanjiFiles = A2(
+	_elm_lang$core$List$map,
+	_user$project$UminokirinGraph$Kanji,
+	{
+		ctor: '::',
+		_0: 'Kanji',
+		_1: {
+			ctor: '::',
+			_0: 'KanjiFormView',
+			_1: {
+				ctor: '::',
+				_0: 'KanjiComs',
+				_1: {
+					ctor: '::',
+					_0: 'KanjiTypes',
+					_1: {
+						ctor: '::',
+						_0: 'KanjiFormTypes',
+						_1: {
+							ctor: '::',
+							_0: 'KanjiTypesCommon',
+							_1: {
+								ctor: '::',
+								_0: 'KanjiInput',
+								_1: {
+									ctor: '::',
+									_0: 'KanjiInputComs',
+									_1: {
+										ctor: '::',
+										_0: 'Utils',
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _user$project$UminokirinGraph$Kana = function (a) {
+	return {ctor: 'Kana', _0: a};
+};
+var _user$project$UminokirinGraph$kanaFiles = A2(
+	_elm_lang$core$List$map,
+	_user$project$UminokirinGraph$Kana,
+	{
+		ctor: '::',
+		_0: 'PracticeContent',
+		_1: {
+			ctor: '::',
+			_0: 'Practice',
+			_1: {
+				ctor: '::',
+				_0: 'LessonsContent',
+				_1: {
+					ctor: '::',
+					_0: 'Lessons',
+					_1: {
+						ctor: '::',
+						_0: 'Kana',
+						_1: {
+							ctor: '::',
+							_0: 'KanaVirtKeyb',
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		}
+	});
+var _user$project$UminokirinGraph$Writing = function (a) {
+	return {ctor: 'Writing', _0: a};
+};
+var _user$project$UminokirinGraph$writingFiles = A2(
+	_elm_lang$core$List$map,
+	_user$project$UminokirinGraph$Writing,
+	{
+		ctor: '::',
+		_0: 'Writing',
+		_1: {
+			ctor: '::',
+			_0: 'WritingContent',
+			_1: {ctor: '[]'}
+		}
+	});
+var _user$project$UminokirinGraph$Main = function (a) {
+	return {ctor: 'Main', _0: a};
+};
+var _user$project$UminokirinGraph$mainFiles = A2(
+	_elm_lang$core$List$map,
+	_user$project$UminokirinGraph$Main,
+	{
+		ctor: '::',
+		_0: 'Main',
+		_1: {
+			ctor: '::',
+			_0: 'Types',
+			_1: {ctor: '[]'}
+		}
+	});
+var _user$project$UminokirinGraph$importNodes = A2(
+	_elm_lang$core$Basics_ops['++'],
+	_user$project$UminokirinGraph$mainFiles,
+	A2(
+		_elm_lang$core$Basics_ops['++'],
+		_user$project$UminokirinGraph$writingFiles,
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			_user$project$UminokirinGraph$kanaFiles,
+			A2(_elm_lang$core$Basics_ops['++'], _user$project$UminokirinGraph$kanjiFiles, _user$project$UminokirinGraph$usrAccntsFiles))));
+var _user$project$UminokirinGraph$ImportEdge = {ctor: 'ImportEdge'};
+var _user$project$UminokirinGraph$importEdges = {
+	ctor: '::',
+	_0: {
+		ctor: '_Tuple3',
+		_0: 'Writing',
+		_1: 'Main',
+		_2: {
+			ctor: '::',
+			_0: _user$project$UminokirinGraph$ImportEdge,
+			_1: {ctor: '[]'}
+		}
+	},
+	_1: {
+		ctor: '::',
+		_0: {
+			ctor: '_Tuple3',
+			_0: 'UserAccounts.UserAccounts',
+			_1: 'Main',
+			_2: {
+				ctor: '::',
+				_0: _user$project$UminokirinGraph$ImportEdge,
+				_1: {ctor: '[]'}
+			}
+		},
+		_1: {
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple3',
+				_0: 'UserAccounts.MultLangText',
+				_1: 'Main',
+				_2: {
+					ctor: '::',
+					_0: _user$project$UminokirinGraph$ImportEdge,
+					_1: {ctor: '[]'}
+				}
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple3',
+					_0: 'Types',
+					_1: 'Main',
+					_2: {
+						ctor: '::',
+						_0: _user$project$UminokirinGraph$ImportEdge,
+						_1: {ctor: '[]'}
+					}
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple3',
+						_0: 'WritingContent',
+						_1: 'Practice',
+						_2: {
+							ctor: '::',
+							_0: _user$project$UminokirinGraph$ImportEdge,
+							_1: {ctor: '[]'}
+						}
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple3',
+							_0: 'KanaVirtKeyb',
+							_1: 'Practice',
+							_2: {
+								ctor: '::',
+								_0: _user$project$UminokirinGraph$ImportEdge,
+								_1: {ctor: '[]'}
+							}
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple3',
+								_0: 'PracticeContent',
+								_1: 'Practice',
+								_2: {
+									ctor: '::',
+									_0: _user$project$UminokirinGraph$ImportEdge,
+									_1: {ctor: '[]'}
+								}
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple3',
+									_0: 'UserAccounts.UserAccounts',
+									_1: 'Types',
+									_2: {
+										ctor: '::',
+										_0: _user$project$UminokirinGraph$ImportEdge,
+										_1: {ctor: '[]'}
+									}
+								},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple3',
+										_0: 'Writing',
+										_1: 'Types',
+										_2: {
+											ctor: '::',
+											_0: _user$project$UminokirinGraph$ImportEdge,
+											_1: {ctor: '[]'}
+										}
+									},
+									_1: {
+										ctor: '::',
+										_0: {
+											ctor: '_Tuple3',
+											_0: 'UserAccounts.ComBox',
+											_1: 'Utils',
+											_2: {
+												ctor: '::',
+												_0: _user$project$UminokirinGraph$ImportEdge,
+												_1: {ctor: '[]'}
+											}
+										},
+										_1: {
+											ctor: '::',
+											_0: {
+												ctor: '_Tuple3',
+												_0: 'UserAccounts.UserAccounts',
+												_1: 'Utils',
+												_2: {
+													ctor: '::',
+													_0: _user$project$UminokirinGraph$ImportEdge,
+													_1: {ctor: '[]'}
+												}
+											},
+											_1: {
+												ctor: '::',
+												_0: {
+													ctor: '_Tuple3',
+													_0: 'UserAccounts.UserAccounts',
+													_1: 'Writing',
+													_2: {
+														ctor: '::',
+														_0: _user$project$UminokirinGraph$ImportEdge,
+														_1: {ctor: '[]'}
+													}
+												},
+												_1: {
+													ctor: '::',
+													_0: {
+														ctor: '_Tuple3',
+														_0: 'WritingContent',
+														_1: 'Writing',
+														_2: {
+															ctor: '::',
+															_0: _user$project$UminokirinGraph$ImportEdge,
+															_1: {ctor: '[]'}
+														}
+													},
+													_1: {
+														ctor: '::',
+														_0: {
+															ctor: '_Tuple3',
+															_0: 'Kana',
+															_1: 'Writing',
+															_2: {
+																ctor: '::',
+																_0: _user$project$UminokirinGraph$ImportEdge,
+																_1: {ctor: '[]'}
+															}
+														},
+														_1: {
+															ctor: '::',
+															_0: {
+																ctor: '_Tuple3',
+																_0: 'Kanji',
+																_1: 'Writing',
+																_2: {
+																	ctor: '::',
+																	_0: _user$project$UminokirinGraph$ImportEdge,
+																	_1: {ctor: '[]'}
+																}
+															},
+															_1: {
+																ctor: '::',
+																_0: {
+																	ctor: '_Tuple3',
+																	_0: 'Lessons',
+																	_1: 'Kana',
+																	_2: {
+																		ctor: '::',
+																		_0: _user$project$UminokirinGraph$ImportEdge,
+																		_1: {ctor: '[]'}
+																	}
+																},
+																_1: {
+																	ctor: '::',
+																	_0: {
+																		ctor: '_Tuple3',
+																		_0: 'KanjiComs',
+																		_1: 'Kanji',
+																		_2: {
+																			ctor: '::',
+																			_0: _user$project$UminokirinGraph$ImportEdge,
+																			_1: {ctor: '[]'}
+																		}
+																	},
+																	_1: {
+																		ctor: '::',
+																		_0: {
+																			ctor: '_Tuple3',
+																			_0: 'KanjiInput',
+																			_1: 'Kanji',
+																			_2: {
+																				ctor: '::',
+																				_0: _user$project$UminokirinGraph$ImportEdge,
+																				_1: {ctor: '[]'}
+																			}
+																		},
+																		_1: {
+																			ctor: '::',
+																			_0: {
+																				ctor: '_Tuple3',
+																				_0: 'KanjiTypes',
+																				_1: 'Kanji',
+																				_2: {
+																					ctor: '::',
+																					_0: _user$project$UminokirinGraph$ImportEdge,
+																					_1: {ctor: '[]'}
+																				}
+																			},
+																			_1: {
+																				ctor: '::',
+																				_0: {
+																					ctor: '_Tuple3',
+																					_0: 'UserAccounts.UserAccounts',
+																					_1: 'Kanji',
+																					_2: {
+																						ctor: '::',
+																						_0: _user$project$UminokirinGraph$ImportEdge,
+																						_1: {ctor: '[]'}
+																					}
+																				},
+																				_1: {
+																					ctor: '::',
+																					_0: {
+																						ctor: '_Tuple3',
+																						_0: 'Utils',
+																						_1: 'Kanji',
+																						_2: {
+																							ctor: '::',
+																							_0: _user$project$UminokirinGraph$ImportEdge,
+																							_1: {ctor: '[]'}
+																						}
+																					},
+																					_1: {
+																						ctor: '::',
+																						_0: {
+																							ctor: '_Tuple3',
+																							_0: 'KanjiTypes',
+																							_1: 'KanjiComs',
+																							_2: {
+																								ctor: '::',
+																								_0: _user$project$UminokirinGraph$ImportEdge,
+																								_1: {ctor: '[]'}
+																							}
+																						},
+																						_1: {
+																							ctor: '::',
+																							_0: {
+																								ctor: '_Tuple3',
+																								_0: 'KanjiTypesCommon',
+																								_1: 'KanjiComs',
+																								_2: {
+																									ctor: '::',
+																									_0: _user$project$UminokirinGraph$ImportEdge,
+																									_1: {ctor: '[]'}
+																								}
+																							},
+																							_1: {
+																								ctor: '::',
+																								_0: {
+																									ctor: '_Tuple3',
+																									_0: 'UserAccounts.UserAccounts',
+																									_1: 'KanjiComs',
+																									_2: {
+																										ctor: '::',
+																										_0: _user$project$UminokirinGraph$ImportEdge,
+																										_1: {ctor: '[]'}
+																									}
+																								},
+																								_1: {
+																									ctor: '::',
+																									_0: {
+																										ctor: '_Tuple3',
+																										_0: 'KanjiTypesCommon',
+																										_1: 'KanjiFormTypes',
+																										_2: {
+																											ctor: '::',
+																											_0: _user$project$UminokirinGraph$ImportEdge,
+																											_1: {ctor: '[]'}
+																										}
+																									},
+																									_1: {
+																										ctor: '::',
+																										_0: {
+																											ctor: '_Tuple3',
+																											_0: 'UserAccounts.ComBox',
+																											_1: 'KanjiFormTypes',
+																											_2: {
+																												ctor: '::',
+																												_0: _user$project$UminokirinGraph$ImportEdge,
+																												_1: {ctor: '[]'}
+																											}
+																										},
+																										_1: {
+																											ctor: '::',
+																											_0: {
+																												ctor: '_Tuple3',
+																												_0: 'KanjiFormTypes',
+																												_1: 'KanjiFormView',
+																												_2: {
+																													ctor: '::',
+																													_0: _user$project$UminokirinGraph$ImportEdge,
+																													_1: {ctor: '[]'}
+																												}
+																											},
+																											_1: {
+																												ctor: '::',
+																												_0: {
+																													ctor: '_Tuple3',
+																													_0: 'UserAccounts.ComBox',
+																													_1: 'KanjiFormView',
+																													_2: {
+																														ctor: '::',
+																														_0: _user$project$UminokirinGraph$ImportEdge,
+																														_1: {ctor: '[]'}
+																													}
+																												},
+																												_1: {
+																													ctor: '::',
+																													_0: {
+																														ctor: '_Tuple3',
+																														_0: 'KanjiFormTypes',
+																														_1: 'KanjiInput',
+																														_2: {
+																															ctor: '::',
+																															_0: _user$project$UminokirinGraph$ImportEdge,
+																															_1: {ctor: '[]'}
+																														}
+																													},
+																													_1: {
+																														ctor: '::',
+																														_0: {
+																															ctor: '_Tuple3',
+																															_0: 'KanjiFormView',
+																															_1: 'KanjiInput',
+																															_2: {
+																																ctor: '::',
+																																_0: _user$project$UminokirinGraph$ImportEdge,
+																																_1: {ctor: '[]'}
+																															}
+																														},
+																														_1: {
+																															ctor: '::',
+																															_0: {
+																																ctor: '_Tuple3',
+																																_0: 'KanjiInputComs',
+																																_1: 'KanjiInput',
+																																_2: {
+																																	ctor: '::',
+																																	_0: _user$project$UminokirinGraph$ImportEdge,
+																																	_1: {ctor: '[]'}
+																																}
+																															},
+																															_1: {
+																																ctor: '::',
+																																_0: {
+																																	ctor: '_Tuple3',
+																																	_0: 'UserAccounts.ComBox',
+																																	_1: 'KanjiInput',
+																																	_2: {
+																																		ctor: '::',
+																																		_0: _user$project$UminokirinGraph$ImportEdge,
+																																		_1: {ctor: '[]'}
+																																	}
+																																},
+																																_1: {
+																																	ctor: '::',
+																																	_0: {
+																																		ctor: '_Tuple3',
+																																		_0: 'UserAccounts.UserAccounts',
+																																		_1: 'KanjiInput',
+																																		_2: {
+																																			ctor: '::',
+																																			_0: _user$project$UminokirinGraph$ImportEdge,
+																																			_1: {ctor: '[]'}
+																																		}
+																																	},
+																																	_1: {
+																																		ctor: '::',
+																																		_0: {
+																																			ctor: '_Tuple3',
+																																			_0: 'Utils',
+																																			_1: 'KanjiInput',
+																																			_2: {
+																																				ctor: '::',
+																																				_0: _user$project$UminokirinGraph$ImportEdge,
+																																				_1: {ctor: '[]'}
+																																			}
+																																		},
+																																		_1: {
+																																			ctor: '::',
+																																			_0: {
+																																				ctor: '_Tuple3',
+																																				_0: 'UserAccounts.UserAccounts',
+																																				_1: 'KanjiInputComs',
+																																				_2: {
+																																					ctor: '::',
+																																					_0: _user$project$UminokirinGraph$ImportEdge,
+																																					_1: {ctor: '[]'}
+																																				}
+																																			},
+																																			_1: {
+																																				ctor: '::',
+																																				_0: {
+																																					ctor: '_Tuple3',
+																																					_0: 'KanjiFormTypes',
+																																					_1: 'KanjiInputComs',
+																																					_2: {
+																																						ctor: '::',
+																																						_0: _user$project$UminokirinGraph$ImportEdge,
+																																						_1: {ctor: '[]'}
+																																					}
+																																				},
+																																				_1: {
+																																					ctor: '::',
+																																					_0: {
+																																						ctor: '_Tuple3',
+																																						_0: 'KanjiTypesCommon',
+																																						_1: 'KanjiInputComs',
+																																						_2: {
+																																							ctor: '::',
+																																							_0: _user$project$UminokirinGraph$ImportEdge,
+																																							_1: {ctor: '[]'}
+																																						}
+																																					},
+																																					_1: {
+																																						ctor: '::',
+																																						_0: {
+																																							ctor: '_Tuple3',
+																																							_0: 'Utils',
+																																							_1: 'KanjiInputComs',
+																																							_2: {
+																																								ctor: '::',
+																																								_0: _user$project$UminokirinGraph$ImportEdge,
+																																								_1: {ctor: '[]'}
+																																							}
+																																						},
+																																						_1: {
+																																							ctor: '::',
+																																							_0: {
+																																								ctor: '_Tuple3',
+																																								_0: 'KanjiInput',
+																																								_1: 'KanjiTypes',
+																																								_2: {
+																																									ctor: '::',
+																																									_0: _user$project$UminokirinGraph$ImportEdge,
+																																									_1: {ctor: '[]'}
+																																								}
+																																							},
+																																							_1: {
+																																								ctor: '::',
+																																								_0: {
+																																									ctor: '_Tuple3',
+																																									_0: 'KanjiTypesCommon',
+																																									_1: 'KanjiTypes',
+																																									_2: {
+																																										ctor: '::',
+																																										_0: _user$project$UminokirinGraph$ImportEdge,
+																																										_1: {ctor: '[]'}
+																																									}
+																																								},
+																																								_1: {
+																																									ctor: '::',
+																																									_0: {
+																																										ctor: '_Tuple3',
+																																										_0: 'Utils',
+																																										_1: 'KanjiTypesCommon',
+																																										_2: {
+																																											ctor: '::',
+																																											_0: _user$project$UminokirinGraph$ImportEdge,
+																																											_1: {ctor: '[]'}
+																																										}
+																																									},
+																																									_1: {
+																																										ctor: '::',
+																																										_0: {
+																																											ctor: '_Tuple3',
+																																											_0: 'UserAccounts.ComBox',
+																																											_1: 'KanjiTypesCommon',
+																																											_2: {
+																																												ctor: '::',
+																																												_0: _user$project$UminokirinGraph$ImportEdge,
+																																												_1: {ctor: '[]'}
+																																											}
+																																										},
+																																										_1: {
+																																											ctor: '::',
+																																											_0: {
+																																												ctor: '_Tuple3',
+																																												_0: 'WritingContent',
+																																												_1: 'Lessons',
+																																												_2: {
+																																													ctor: '::',
+																																													_0: _user$project$UminokirinGraph$ImportEdge,
+																																													_1: {ctor: '[]'}
+																																												}
+																																											},
+																																											_1: {
+																																												ctor: '::',
+																																												_0: {
+																																													ctor: '_Tuple3',
+																																													_0: 'Practice',
+																																													_1: 'Lessons',
+																																													_2: {
+																																														ctor: '::',
+																																														_0: _user$project$UminokirinGraph$ImportEdge,
+																																														_1: {ctor: '[]'}
+																																													}
+																																												},
+																																												_1: {
+																																													ctor: '::',
+																																													_0: {
+																																														ctor: '_Tuple3',
+																																														_0: 'Practice',
+																																														_1: 'LessonsContent',
+																																														_2: {
+																																															ctor: '::',
+																																															_0: _user$project$UminokirinGraph$ImportEdge,
+																																															_1: {ctor: '[]'}
+																																														}
+																																													},
+																																													_1: {
+																																														ctor: '::',
+																																														_0: {
+																																															ctor: '_Tuple3',
+																																															_0: 'UserAccounts.MultLangText',
+																																															_1: 'UserAccounts.Login',
+																																															_2: {
+																																																ctor: '::',
+																																																_0: _user$project$UminokirinGraph$ImportEdge,
+																																																_1: {ctor: '[]'}
+																																															}
+																																														},
+																																														_1: {
+																																															ctor: '::',
+																																															_0: {
+																																																ctor: '_Tuple3',
+																																																_0: 'UserAccounts.UserAccountsTypes',
+																																																_1: 'UserAccounts.Login',
+																																																_2: {
+																																																	ctor: '::',
+																																																	_0: _user$project$UminokirinGraph$ImportEdge,
+																																																	_1: {ctor: '[]'}
+																																																}
+																																															},
+																																															_1: {
+																																																ctor: '::',
+																																																_0: {
+																																																	ctor: '_Tuple3',
+																																																	_0: 'UserAccounts.Utils',
+																																																	_1: 'UserAccounts.Login',
+																																																	_2: {
+																																																		ctor: '::',
+																																																		_0: _user$project$UminokirinGraph$ImportEdge,
+																																																		_1: {ctor: '[]'}
+																																																	}
+																																																},
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: {
+																																																		ctor: '_Tuple3',
+																																																		_0: 'UserAccounts.MultLangText',
+																																																		_1: 'UserAccounts.Signup',
+																																																		_2: {
+																																																			ctor: '::',
+																																																			_0: _user$project$UminokirinGraph$ImportEdge,
+																																																			_1: {ctor: '[]'}
+																																																		}
+																																																	},
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: {
+																																																			ctor: '_Tuple3',
+																																																			_0: 'UserAccounts.UserAccountsTypes',
+																																																			_1: 'UserAccounts.Signup',
+																																																			_2: {
+																																																				ctor: '::',
+																																																				_0: _user$project$UminokirinGraph$ImportEdge,
+																																																				_1: {ctor: '[]'}
+																																																			}
+																																																		},
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: {
+																																																				ctor: '_Tuple3',
+																																																				_0: 'UserAccounts.Utils',
+																																																				_1: 'UserAccounts.Signup',
+																																																				_2: {
+																																																					ctor: '::',
+																																																					_0: _user$project$UminokirinGraph$ImportEdge,
+																																																					_1: {ctor: '[]'}
+																																																				}
+																																																			},
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: {
+																																																					ctor: '_Tuple3',
+																																																					_0: 'UserAccounts.MultLangText',
+																																																					_1: 'UserAccounts.UserAccounts',
+																																																					_2: {
+																																																						ctor: '::',
+																																																						_0: _user$project$UminokirinGraph$ImportEdge,
+																																																						_1: {ctor: '[]'}
+																																																					}
+																																																				},
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: {
+																																																						ctor: '_Tuple3',
+																																																						_0: 'UserAccounts.UserAccountsTypes',
+																																																						_1: 'UserAccounts.UserAccounts',
+																																																						_2: {
+																																																							ctor: '::',
+																																																							_0: _user$project$UminokirinGraph$ImportEdge,
+																																																							_1: {ctor: '[]'}
+																																																						}
+																																																					},
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: {
+																																																							ctor: '_Tuple3',
+																																																							_0: 'UserAccounts.Login',
+																																																							_1: 'UserAccounts.UserAccounts',
+																																																							_2: {
+																																																								ctor: '::',
+																																																								_0: _user$project$UminokirinGraph$ImportEdge,
+																																																								_1: {ctor: '[]'}
+																																																							}
+																																																						},
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: {
+																																																								ctor: '_Tuple3',
+																																																								_0: 'UserAccounts.Signup',
+																																																								_1: 'UserAccounts.UserAccounts',
+																																																								_2: {
+																																																									ctor: '::',
+																																																									_0: _user$project$UminokirinGraph$ImportEdge,
+																																																									_1: {ctor: '[]'}
+																																																								}
+																																																							},
+																																																							_1: {
+																																																								ctor: '::',
+																																																								_0: {
+																																																									ctor: '_Tuple3',
+																																																									_0: 'UserAccounts.UsrManager',
+																																																									_1: 'UserAccounts.UserAccounts',
+																																																									_2: {
+																																																										ctor: '::',
+																																																										_0: _user$project$UminokirinGraph$ImportEdge,
+																																																										_1: {ctor: '[]'}
+																																																									}
+																																																								},
+																																																								_1: {
+																																																									ctor: '::',
+																																																									_0: {
+																																																										ctor: '_Tuple3',
+																																																										_0: 'UserAccounts.Utils',
+																																																										_1: 'UserAccounts.UserAccounts',
+																																																										_2: {
+																																																											ctor: '::',
+																																																											_0: _user$project$UminokirinGraph$ImportEdge,
+																																																											_1: {ctor: '[]'}
+																																																										}
+																																																									},
+																																																									_1: {
+																																																										ctor: '::',
+																																																										_0: {
+																																																											ctor: '_Tuple3',
+																																																											_0: 'UserAccounts.MultLangText',
+																																																											_1: 'UserAccounts.UserAccountsTypes',
+																																																											_2: {
+																																																												ctor: '::',
+																																																												_0: _user$project$UminokirinGraph$ImportEdge,
+																																																												_1: {ctor: '[]'}
+																																																											}
+																																																										},
+																																																										_1: {
+																																																											ctor: '::',
+																																																											_0: {
+																																																												ctor: '_Tuple3',
+																																																												_0: 'UserAccounts.UserAccountsTypes',
+																																																												_1: 'UserAccounts.UsrManager',
+																																																												_2: {
+																																																													ctor: '::',
+																																																													_0: _user$project$UminokirinGraph$ImportEdge,
+																																																													_1: {ctor: '[]'}
+																																																												}
+																																																											},
+																																																											_1: {
+																																																												ctor: '::',
+																																																												_0: {
+																																																													ctor: '_Tuple3',
+																																																													_0: 'UserAccounts.ComBox',
+																																																													_1: 'UserAccounts.UsrManager',
+																																																													_2: {
+																																																														ctor: '::',
+																																																														_0: _user$project$UminokirinGraph$ImportEdge,
+																																																														_1: {ctor: '[]'}
+																																																													}
+																																																												},
+																																																												_1: {
+																																																													ctor: '::',
+																																																													_0: {
+																																																														ctor: '_Tuple3',
+																																																														_0: 'UserAccounts.UserAccountsTypes',
+																																																														_1: 'UserAccounts.UsrManager',
+																																																														_2: {
+																																																															ctor: '::',
+																																																															_0: _user$project$UminokirinGraph$ImportEdge,
+																																																															_1: {ctor: '[]'}
+																																																														}
+																																																													},
+																																																													_1: {
+																																																														ctor: '::',
+																																																														_0: {
+																																																															ctor: '_Tuple3',
+																																																															_0: 'UserAccounts.Utils',
+																																																															_1: 'UserAccounts.UsrManager',
+																																																															_2: {
+																																																																ctor: '::',
+																																																																_0: _user$project$UminokirinGraph$ImportEdge,
+																																																																_1: {ctor: '[]'}
+																																																															}
+																																																														},
+																																																														_1: {
+																																																															ctor: '::',
+																																																															_0: {
+																																																																ctor: '_Tuple3',
+																																																																_0: 'UserAccounts.MultLangText',
+																																																																_1: 'UserAccounts.Utils',
+																																																																_2: {
+																																																																	ctor: '::',
+																																																																	_0: _user$project$UminokirinGraph$ImportEdge,
+																																																																	_1: {ctor: '[]'}
+																																																																}
+																																																															},
+																																																															_1: {ctor: '[]'}
+																																																														}
+																																																													}
+																																																												}
+																																																											}
+																																																										}
+																																																									}
+																																																								}
+																																																							}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$UminokirinGraph$importGraphStr = A5(_user$project$UminokirinGraph$makeGraph, _user$project$UminokirinGraph$importNodes, _user$project$UminokirinGraph$importEdges, _user$project$UminokirinGraph$makeImportNode, _user$project$UminokirinGraph$importEdgeColor, _user$project$UminokirinGraph$topStylesBT);
+var _user$project$UminokirinGraph$FolderNode = function (a) {
+	return {ctor: 'FolderNode', _0: a};
+};
+var _user$project$UminokirinGraph$HtmlNode = function (a) {
+	return {ctor: 'HtmlNode', _0: a};
+};
+var _user$project$UminokirinGraph$htmlFiles = A2(
+	_elm_lang$core$List$map,
+	_user$project$UminokirinGraph$HtmlNode,
+	{
+		ctor: '::',
+		_0: 'index.html',
+		_1: {ctor: '[]'}
+	});
+var _user$project$UminokirinGraph$SqlTableNode = function (a) {
+	return {ctor: 'SqlTableNode', _0: a};
+};
+var _user$project$UminokirinGraph$sqlTables = A2(
+	_elm_lang$core$List$map,
+	_user$project$UminokirinGraph$SqlTableNode,
+	{
+		ctor: '::',
+		_0: 'kanji',
+		_1: {
+			ctor: '::',
+			_0: 'users',
+			_1: {ctor: '[]'}
+		}
+	});
+var _user$project$UminokirinGraph$ElmNode = function (a) {
+	return {ctor: 'ElmNode', _0: a};
+};
+var _user$project$UminokirinGraph$elmFiles = A2(
+	_elm_lang$core$List$map,
+	_user$project$UminokirinGraph$ElmNode,
+	{
+		ctor: '::',
+		_0: 'KanjiComs',
+		_1: {
+			ctor: '::',
+			_0: 'KanjiInputComs',
+			_1: {
+				ctor: '::',
+				_0: 'Main',
+				_1: {
+					ctor: '::',
+					_0: 'UserAccounts.UserAccounts',
+					_1: {ctor: '[]'}
+				}
+			}
+		}
+	});
+var _user$project$UminokirinGraph$PhpNode = function (a) {
+	return {ctor: 'PhpNode', _0: a};
+};
+var _user$project$UminokirinGraph$phpFiles = A2(
+	_elm_lang$core$List$map,
+	_user$project$UminokirinGraph$PhpNode,
+	{
+		ctor: '::',
+		_0: 'deleteKanji',
+		_1: {
+			ctor: '::',
+			_0: 'getEveryKanji',
+			_1: {
+				ctor: '::',
+				_0: 'getKanji',
+				_1: {
+					ctor: '::',
+					_0: 'getusers',
+					_1: {
+						ctor: '::',
+						_0: 'login',
+						_1: {
+							ctor: '::',
+							_0: 'logout',
+							_1: {
+								ctor: '::',
+								_0: 'updateKanji',
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}
+			}
+		}
+	});
+var _user$project$UminokirinGraph$comNodes = A2(
+	_elm_lang$core$Basics_ops['++'],
+	_user$project$UminokirinGraph$elmFiles,
+	A2(
+		_elm_lang$core$Basics_ops['++'],
+		_user$project$UminokirinGraph$phpFiles,
+		A2(_elm_lang$core$Basics_ops['++'], _user$project$UminokirinGraph$sqlTables, _user$project$UminokirinGraph$htmlFiles)));
+var _user$project$UminokirinGraph$Port = {ctor: 'Port'};
+var _user$project$UminokirinGraph$FileInteract = {ctor: 'FileInteract'};
+var _user$project$UminokirinGraph$Delete = {ctor: 'Delete'};
+var _user$project$UminokirinGraph$InsertEdge = {ctor: 'InsertEdge'};
+var _user$project$UminokirinGraph$SelectEdge = {ctor: 'SelectEdge'};
+var _user$project$UminokirinGraph$UpdateEdge = {ctor: 'UpdateEdge'};
+var _user$project$UminokirinGraph$PostEdge = {ctor: 'PostEdge'};
+var _user$project$UminokirinGraph$GetEdge = {ctor: 'GetEdge'};
+var _user$project$UminokirinGraph$comEdges = {
+	ctor: '::',
+	_0: {
+		ctor: '_Tuple3',
+		_0: 'getKanji',
+		_1: 'KanjiComs',
+		_2: {
+			ctor: '::',
+			_0: _user$project$UminokirinGraph$GetEdge,
+			_1: {ctor: '[]'}
+		}
+	},
+	_1: {
+		ctor: '::',
+		_0: {
+			ctor: '_Tuple3',
+			_0: 'getEveryKanji',
+			_1: 'KanjiComs',
+			_2: {
+				ctor: '::',
+				_0: _user$project$UminokirinGraph$GetEdge,
+				_1: {ctor: '[]'}
+			}
+		},
+		_1: {
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple3',
+				_0: 'getKanji',
+				_1: 'KanjiInputComs',
+				_2: {
+					ctor: '::',
+					_0: _user$project$UminokirinGraph$GetEdge,
+					_1: {ctor: '[]'}
+				}
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple3',
+					_0: 'KanjiInputComs',
+					_1: 'updateKanji',
+					_2: {
+						ctor: '::',
+						_0: _user$project$UminokirinGraph$PostEdge,
+						_1: {ctor: '[]'}
+					}
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple3',
+						_0: 'KanjiInputComs',
+						_1: 'deleteKanji',
+						_2: {
+							ctor: '::',
+							_0: _user$project$UminokirinGraph$PostEdge,
+							_1: {ctor: '[]'}
+						}
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple3',
+							_0: 'Main',
+							_1: 'index.html',
+							_2: {
+								ctor: '::',
+								_0: _user$project$UminokirinGraph$Port,
+								_1: {ctor: '[]'}
+							}
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple3',
+								_0: 'users',
+								_1: 'deleteKanji',
+								_2: {
+									ctor: '::',
+									_0: _user$project$UminokirinGraph$SelectEdge,
+									_1: {ctor: '[]'}
+								}
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple3',
+									_0: 'deleteKanji',
+									_1: 'kanji',
+									_2: {
+										ctor: '::',
+										_0: _user$project$UminokirinGraph$Delete,
+										_1: {ctor: '[]'}
+									}
+								},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple3',
+										_0: 'getEveryKanji',
+										_1: 'kanji',
+										_2: {
+											ctor: '::',
+											_0: _user$project$UminokirinGraph$SelectEdge,
+											_1: {ctor: '[]'}
+										}
+									},
+									_1: {
+										ctor: '::',
+										_0: {
+											ctor: '_Tuple3',
+											_0: 'kanji',
+											_1: 'getKanji',
+											_2: {
+												ctor: '::',
+												_0: _user$project$UminokirinGraph$SelectEdge,
+												_1: {ctor: '[]'}
+											}
+										},
+										_1: {
+											ctor: '::',
+											_0: {
+												ctor: '_Tuple3',
+												_0: 'users',
+												_1: 'getusers',
+												_2: {
+													ctor: '::',
+													_0: _user$project$UminokirinGraph$SelectEdge,
+													_1: {ctor: '[]'}
+												}
+											},
+											_1: {
+												ctor: '::',
+												_0: {
+													ctor: '_Tuple3',
+													_0: 'UserAccounts.UserAccounts',
+													_1: 'login',
+													_2: {
+														ctor: '::',
+														_0: _user$project$UminokirinGraph$PostEdge,
+														_1: {ctor: '[]'}
+													}
+												},
+												_1: {
+													ctor: '::',
+													_0: {
+														ctor: '_Tuple3',
+														_0: 'login',
+														_1: 'UserAccounts.UserAccounts',
+														_2: {
+															ctor: '::',
+															_0: _user$project$UminokirinGraph$GetEdge,
+															_1: {ctor: '[]'}
+														}
+													},
+													_1: {
+														ctor: '::',
+														_0: {
+															ctor: '_Tuple3',
+															_0: 'UserAccounts.UserAccounts',
+															_1: 'logout',
+															_2: {
+																ctor: '::',
+																_0: _user$project$UminokirinGraph$PostEdge,
+																_1: {ctor: '[]'}
+															}
+														},
+														_1: {
+															ctor: '::',
+															_0: {
+																ctor: '_Tuple3',
+																_0: 'users',
+																_1: 'login',
+																_2: {
+																	ctor: '::',
+																	_0: _user$project$UminokirinGraph$SelectEdge,
+																	_1: {ctor: '[]'}
+																}
+															},
+															_1: {
+																ctor: '::',
+																_0: {
+																	ctor: '_Tuple3',
+																	_0: 'users',
+																	_1: 'updateKanji',
+																	_2: {
+																		ctor: '::',
+																		_0: _user$project$UminokirinGraph$SelectEdge,
+																		_1: {ctor: '[]'}
+																	}
+																},
+																_1: {
+																	ctor: '::',
+																	_0: {
+																		ctor: '_Tuple3',
+																		_0: 'updateKanji',
+																		_1: 'kanji',
+																		_2: {
+																			ctor: '::',
+																			_0: _user$project$UminokirinGraph$InsertEdge,
+																			_1: {ctor: '[]'}
+																		}
+																	},
+																	_1: {ctor: '[]'}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$UminokirinGraph$comGraphStr = A5(_user$project$UminokirinGraph$makeGraph, _user$project$UminokirinGraph$comNodes, _user$project$UminokirinGraph$comEdges, _user$project$UminokirinGraph$makeComNode, _user$project$UminokirinGraph$comEdgeColor, _user$project$UminokirinGraph$topStylesTB);
+var _user$project$UminokirinGraph$init = function () {
+	var graphs = {
+		ctor: '::',
+		_0: _user$project$UminokirinGraph$importGraphStr,
+		_1: {
+			ctor: '::',
+			_0: _user$project$UminokirinGraph$comGraphStr,
+			_1: {ctor: '[]'}
+		}
+	};
+	return A2(
+		_elm_lang$core$Platform_Cmd_ops['!'],
+		{
+			graphVizStr: graphs,
+			svgStr: {ctor: '[]'}
+		},
+		A2(_elm_lang$core$List$map, _user$project$UminokirinGraph$toRender, graphs));
+}();
+var _user$project$UminokirinGraph$Parse = {ctor: 'Parse'};
+var _user$project$UminokirinGraph$SvgStr = function (a) {
+	return {ctor: 'SvgStr', _0: a};
+};
+var _user$project$UminokirinGraph$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$batch(
+		{
+			ctor: '::',
+			_0: _user$project$UminokirinGraph$svgStrSub(_user$project$UminokirinGraph$SvgStr),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$UminokirinGraph$main = _elm_lang$html$Html$program(
+	{init: _user$project$UminokirinGraph$init, update: _user$project$UminokirinGraph$update, view: _user$project$UminokirinGraph$view, subscriptions: _user$project$UminokirinGraph$subscriptions})();

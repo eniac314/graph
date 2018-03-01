@@ -1,0 +1,263 @@
+var _elm_community$graph$Graph_GraphViz$outputWithStylesWithOverrides = F2(
+	function (styles, graph) {
+		var nodes = _elm_community$graph$Graph$nodes(graph);
+		var edges = function () {
+			var sortEdges = F2(
+				function (a, b) {
+					var _p0 = A2(_elm_lang$core$Basics$compare, a.from, b.from);
+					switch (_p0.ctor) {
+						case 'LT':
+							return _elm_lang$core$Basics$LT;
+						case 'GT':
+							return _elm_lang$core$Basics$GT;
+						default:
+							return A2(_elm_lang$core$Basics$compare, a.to, b.to);
+					}
+				});
+			return A2(
+				_elm_lang$core$List$sortWith,
+				sortEdges,
+				_elm_community$graph$Graph$edges(graph));
+		}();
+		var getText = function (id) {
+			return A2(
+				_elm_lang$core$Maybe$withDefault,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'*Node id ',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(id),
+						' not found*')),
+				A2(
+					_elm_lang$core$Maybe$map,
+					function (_p1) {
+						return function (_) {
+							return _.text;
+						}(
+							function (_) {
+								return _.label;
+							}(
+								function (_) {
+									return _.node;
+								}(_p1)));
+					},
+					A2(_elm_community$graph$Graph$get, id, graph)));
+		};
+		var edge = function (_p2) {
+			var _p3 = _p2;
+			var _p4 = _p3.label;
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'  ',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Basics$toString(
+						getText(_p3.from)),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						' -> ',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(
+								getText(_p3.to)),
+							(!_elm_lang$core$String$isEmpty(_p4.attrs)) ? A2(
+								_elm_lang$core$Basics_ops['++'],
+								' [',
+								A2(_elm_lang$core$Basics_ops['++'], _p4.attrs, ']')) : ''))));
+		};
+		var edgesString = A2(
+			_elm_lang$core$String$join,
+			'\n',
+			A2(_elm_lang$core$List$map, edge, edges));
+		var node = function (node) {
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'  ',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Basics$toString(
+						getText(node.id)),
+					(!_elm_lang$core$String$isEmpty(node.label.attrs)) ? A2(
+						_elm_lang$core$Basics_ops['++'],
+						' [',
+						A2(_elm_lang$core$Basics_ops['++'], node.label.attrs, ']')) : ''));
+		};
+		var nodesString = A2(
+			_elm_lang$core$String$join,
+			'\n',
+			A2(_elm_lang$core$List$map, node, nodes));
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'digraph G {\n',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'  rankdir=',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(styles.rankdir),
+						'\n')),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'  graph [',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							styles.graph,
+							A2(_elm_lang$core$Basics_ops['++'], ']', '\n'))),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'  node [',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								styles.node,
+								A2(_elm_lang$core$Basics_ops['++'], ']', '\n'))),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'  edge [',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									styles.edge,
+									A2(_elm_lang$core$Basics_ops['++'], ']', '\n\n'))),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								A2(_elm_lang$core$Basics_ops['++'], edgesString, '\n\n'),
+								A2(_elm_lang$core$Basics_ops['++'], nodesString, '\n}')))))));
+	});
+var _elm_community$graph$Graph_GraphViz$outputWithStyles = F2(
+	function (styles, graph) {
+		var nodes = _elm_community$graph$Graph$nodes(graph);
+		var edges = function () {
+			var sortEdges = F2(
+				function (a, b) {
+					var _p5 = A2(_elm_lang$core$Basics$compare, a.from, b.from);
+					switch (_p5.ctor) {
+						case 'LT':
+							return _elm_lang$core$Basics$LT;
+						case 'GT':
+							return _elm_lang$core$Basics$GT;
+						default:
+							return A2(_elm_lang$core$Basics$compare, a.to, b.to);
+					}
+				});
+			return A2(
+				_elm_lang$core$List$sortWith,
+				sortEdges,
+				_elm_community$graph$Graph$edges(graph));
+		}();
+		var getText = function (id) {
+			return A2(
+				_elm_lang$core$Maybe$withDefault,
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'*Node id ',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(id),
+						' not found*')),
+				A2(
+					_elm_lang$core$Maybe$map,
+					function (_p6) {
+						return function (_) {
+							return _.text;
+						}(
+							function (_) {
+								return _.label;
+							}(
+								function (_) {
+									return _.node;
+								}(_p6)));
+					},
+					A2(_elm_community$graph$Graph$get, id, graph)));
+		};
+		var edge = function (_p7) {
+			var _p8 = _p7;
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'  ',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$core$Basics$toString(
+						getText(_p8.from)),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						' -> ',
+						_elm_lang$core$Basics$toString(
+							getText(_p8.to)))));
+		};
+		var edgesString = A2(
+			_elm_lang$core$String$join,
+			'\n',
+			A2(_elm_lang$core$List$map, edge, edges));
+		var node = function (node) {
+			return A2(
+				_elm_lang$core$Basics_ops['++'],
+				'  ',
+				_elm_lang$core$Basics$toString(
+					getText(node.id)));
+		};
+		var nodesString = A2(
+			_elm_lang$core$String$join,
+			'\n',
+			A2(_elm_lang$core$List$map, node, nodes));
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'digraph G {\n',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'  rankdir=',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(styles.rankdir),
+						'\n')),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'  graph [',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							styles.graph,
+							A2(_elm_lang$core$Basics_ops['++'], ']', '\n'))),
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							'  node [',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								styles.node,
+								A2(_elm_lang$core$Basics_ops['++'], ']', '\n'))),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'  edge [',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									styles.edge,
+									A2(_elm_lang$core$Basics_ops['++'], ']', '\n\n'))),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								A2(_elm_lang$core$Basics_ops['++'], edgesString, '\n\n'),
+								A2(_elm_lang$core$Basics_ops['++'], nodesString, '\n}')))))));
+	});
+var _elm_community$graph$Graph_GraphViz$Styles = F4(
+	function (a, b, c, d) {
+		return {rankdir: a, graph: b, node: c, edge: d};
+	});
+var _elm_community$graph$Graph_GraphViz$RL = {ctor: 'RL'};
+var _elm_community$graph$Graph_GraphViz$BT = {ctor: 'BT'};
+var _elm_community$graph$Graph_GraphViz$LR = {ctor: 'LR'};
+var _elm_community$graph$Graph_GraphViz$TB = {ctor: 'TB'};
+var _elm_community$graph$Graph_GraphViz$defaultStyles = A4(_elm_community$graph$Graph_GraphViz$Styles, _elm_community$graph$Graph_GraphViz$TB, '', '', '');
+var _elm_community$graph$Graph_GraphViz$output = _elm_community$graph$Graph_GraphViz$outputWithStyles(_elm_community$graph$Graph_GraphViz$defaultStyles);

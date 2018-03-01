@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html><head><meta charset="UTF-8"><title>Uminokirin Graph</title><style>html,head,body { padding:0; margin:0; }
+body { font-family: calibri, helvetica, arial, sans-serif; }</style>
+<!-- <link rel="stylesheet" href="./styles/style.css"> -->
+<div id="main"></div>
+<script src="js/uminokirinGraph.js"></script>
+<script src="js/viz.js"></script>
+<script>
+    var node = document.getElementById('main');
+    var app = Elm.UminokirinGraph.embed(node);
+    
+    app.ports.toRender.subscribe(function(str) {
+      
+      result = Viz(str, { format: "svg" });
+      app.ports.svgStrSub.send(result);
+      
+    });
+    
+</script>
+<style type="text/css">
+	.scale svg {
+		width: 100%;
+	}
+</style>
+</head><body><script type="text/javascript">Elm.Main.fullscreen()</script></body></html>

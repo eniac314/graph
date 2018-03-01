@@ -1,0 +1,1633 @@
+var _user$project$GitesGraph$removeNothings = function (xs) {
+	return A3(
+		_elm_lang$core$List$foldr,
+		F2(
+			function (x, acc) {
+				var _p0 = x;
+				if (_p0.ctor === 'Nothing') {
+					return acc;
+				} else {
+					return {ctor: '::', _0: _p0._0, _1: acc};
+				}
+			}),
+		{ctor: '[]'},
+		xs);
+};
+var _user$project$GitesGraph$addSubgraphs = F2(
+	function (s, xs) {
+		var makeSubGraph = F2(
+			function (n, xs) {
+				return A2(
+					_elm_lang$core$Basics_ops['++'],
+					'  subgraph cluster_',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Basics$toString(n),
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							' {\n',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								'  rank = same',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(n),
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										'; ',
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											A2(
+												_elm_lang$core$String$join,
+												'',
+												A2(
+													_elm_lang$core$List$map,
+													function (node) {
+														return A2(_elm_lang$core$Basics_ops['++'], node.label.text, '; ');
+													},
+													xs)),
+											'\n  }\n\n')))))));
+			});
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			'\n',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(_elm_lang$core$String$dropRight, 2, s),
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					'\n',
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						_elm_lang$core$Tuple$first(
+							A3(
+								_elm_lang$core$List$foldr,
+								F2(
+									function (gs, _p1) {
+										var _p2 = _p1;
+										var _p3 = _p2._1;
+										return {
+											ctor: '_Tuple2',
+											_0: A2(
+												_elm_lang$core$Basics_ops['++'],
+												A2(makeSubGraph, _p3, gs),
+												_p2._0),
+											_1: _p3 + 1
+										};
+									}),
+								{ctor: '_Tuple2', _0: '', _1: 0},
+								xs)),
+						'\n}\n'))));
+	});
+var _user$project$GitesGraph$trimXml = function (s) {
+	var _p4 = A2(_elm_lang$core$String$indexes, '<svg ', s);
+	if (_p4.ctor === '[]') {
+		return s;
+	} else {
+		return A2(_elm_lang$core$String$dropLeft, _p4._0, s);
+	}
+};
+var _user$project$GitesGraph$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$div,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$classList(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'scale', _1: true},
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				},
+				A3(
+					_elm_lang$core$List$foldr,
+					F2(
+						function (v, acc) {
+							var _p5 = v;
+							if (_p5.ctor === 'Err') {
+								return acc;
+							} else {
+								return {ctor: '::', _0: _p5._0, _1: acc};
+							}
+						}),
+					{ctor: '[]'},
+					A2(_elm_lang$core$List$map, _rnons$elm_svg_parser$SvgParser$parse, model.svgStr))),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$GitesGraph$htmlStyle = 'fillcolor = 5, style = filled, shape = house';
+var _user$project$GitesGraph$foldersStyle = 'fillcolor = 4, style = filled, shape = folder';
+var _user$project$GitesGraph$sqlTableStyle = 'fillcolor = 3, style = filled, shape = cylinder';
+var _user$project$GitesGraph$phpFileStyle = 'fillcolor = 2, style = filled';
+var _user$project$GitesGraph$elmComsFileStyle = 'fillcolor = 1, style = filled, shape = octagon';
+var _user$project$GitesGraph$topStylesTB = _elm_lang$core$Native_Utils.update(
+	_elm_community$graph$Graph_GraphViz$defaultStyles,
+	{rankdir: _elm_community$graph$Graph_GraphViz$TB, node: 'shape = box, colorscheme = accent5'});
+var _user$project$GitesGraph$extractStr = function (cn) {
+	var _p6 = cn;
+	switch (_p6.ctor) {
+		case 'PhpNode':
+			return _p6._0;
+		case 'ElmNode':
+			return _p6._0;
+		case 'SqlTableNode':
+			return _p6._0;
+		case 'HtmlNode':
+			return _p6._0;
+		default:
+			return _p6._0;
+	}
+};
+var _user$project$GitesGraph$makeComGraph = F2(
+	function (nodesData, edgesData) {
+		var edgeColor = function (e) {
+			var _p7 = e;
+			switch (_p7.ctor) {
+				case 'GetEdge':
+					return 'pink';
+				case 'PostEdge':
+					return 'blue';
+				case 'UpdateEdge':
+					return 'green';
+				case 'SelectEdge':
+					return 'purple';
+				case 'InsertEdge':
+					return 'orange';
+				case 'Delete':
+					return 'deeppink4';
+				case 'FileInteract':
+					return 'crimson';
+				default:
+					return 'tomato';
+			}
+		};
+		var edgeAttrs = function (xs) {
+			var _p8 = xs;
+			if ((_p8.ctor === '::') && (_p8._1.ctor === '[]')) {
+				return {
+					attrs: A2(
+						_elm_lang$core$Basics_ops['++'],
+						'color = ',
+						edgeColor(_p8._0))
+				};
+			} else {
+				return function (cstr) {
+					return {
+						attrs: A2(
+							_elm_lang$core$Basics_ops['++'],
+							'color = ',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								cstr,
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									', arrowsize = ',
+									_elm_lang$core$Basics$toString(
+										0.5 + (0.5 * _elm_lang$core$Basics$toFloat(
+											_elm_lang$core$List$length(xs)))))))
+					};
+				}(
+					function (cs) {
+						return A2(
+							_elm_lang$core$Basics_ops['++'],
+							'\"',
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								A2(_elm_lang$core$String$join, '', cs),
+								'\"'));
+					}(
+						A2(
+							_elm_lang$core$List$intersperse,
+							':invis:',
+							A2(_elm_lang$core$List$map, edgeColor, xs))));
+			}
+		};
+		var makeNode = F2(
+			function (node, n) {
+				var _p9 = node;
+				switch (_p9.ctor) {
+					case 'PhpNode':
+						return A2(
+							_elm_community$graph$Graph$Node,
+							n,
+							{text: _p9._0, attrs: _user$project$GitesGraph$phpFileStyle});
+					case 'ElmNode':
+						return A2(
+							_elm_community$graph$Graph$Node,
+							n,
+							{text: _p9._0, attrs: _user$project$GitesGraph$elmComsFileStyle});
+					case 'SqlTableNode':
+						return A2(
+							_elm_community$graph$Graph$Node,
+							n,
+							{text: _p9._0, attrs: _user$project$GitesGraph$sqlTableStyle});
+					case 'HtmlNode':
+						return A2(
+							_elm_community$graph$Graph$Node,
+							n,
+							{text: _p9._0, attrs: _user$project$GitesGraph$htmlStyle});
+					default:
+						return A2(
+							_elm_community$graph$Graph$Node,
+							n,
+							{text: _p9._0, attrs: _user$project$GitesGraph$foldersStyle});
+				}
+			});
+		var nodes = _elm_lang$core$Tuple$first(
+			A3(
+				_elm_lang$core$List$foldr,
+				F2(
+					function (n, _p10) {
+						var _p11 = _p10;
+						var _p12 = _p11._1;
+						return {
+							ctor: '_Tuple2',
+							_0: {
+								ctor: '::',
+								_0: A2(makeNode, n, _p12),
+								_1: _p11._0
+							},
+							_1: _p12 + 1
+						};
+					}),
+				{
+					ctor: '_Tuple2',
+					_0: {ctor: '[]'},
+					_1: 0
+				},
+				nodesData));
+		var index = _elm_lang$core$Dict$fromList(
+			_elm_lang$core$Tuple$second(
+				A3(
+					_elm_lang$core$List$foldr,
+					F2(
+						function (node, _p13) {
+							var _p14 = _p13;
+							var _p15 = _p14._0;
+							return {
+								ctor: '_Tuple2',
+								_0: _p15 + 1,
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: node, _1: _p15},
+									_1: _p14._1
+								}
+							};
+						}),
+					{
+						ctor: '_Tuple2',
+						_0: 0,
+						_1: {ctor: '[]'}
+					},
+					A2(_elm_lang$core$List$map, _user$project$GitesGraph$extractStr, nodesData))));
+		var makeEdge = function (_p16) {
+			var _p17 = _p16;
+			var _p18 = {
+				ctor: '_Tuple2',
+				_0: A2(_elm_lang$core$Dict$get, _p17._0, index),
+				_1: A2(_elm_lang$core$Dict$get, _p17._1, index)
+			};
+			if (((_p18.ctor === '_Tuple2') && (_p18._0.ctor === 'Just')) && (_p18._1.ctor === 'Just')) {
+				return _elm_lang$core$Maybe$Just(
+					A3(
+						_elm_community$graph$Graph$Edge,
+						_p18._0._0,
+						_p18._1._0,
+						edgeAttrs(_p17._2)));
+			} else {
+				return _elm_lang$core$Maybe$Nothing;
+			}
+		};
+		var edges = _user$project$GitesGraph$removeNothings(
+			A2(_elm_lang$core$List$map, makeEdge, edgesData));
+		var graph = A2(_elm_community$graph$Graph$fromNodesAndEdges, nodes, edges);
+		return function (s) {
+			return A2(
+				_user$project$GitesGraph$addSubgraphs,
+				s,
+				{ctor: '[]'});
+		}(
+			A2(_elm_community$graph$Graph_GraphViz$outputWithStylesWithOverrides, _user$project$GitesGraph$topStylesTB, graph));
+	});
+var _user$project$GitesGraph$mainEdgeStyle = _elm_community$graph$Graph_GraphViz$defaultStyles;
+var _user$project$GitesGraph$giteGalleryStyle = 'fillcolor = 6, style = filled';
+var _user$project$GitesGraph$datePickerStyle = 'fillcolor = 5, style = filled';
+var _user$project$GitesGraph$userAccountsStyle = 'fillcolor = 4, style = filled';
+var _user$project$GitesGraph$bookingAdminStyle = 'fillcolor = 3, style = filled';
+var _user$project$GitesGraph$bookingStyle = 'fillcolor = 2, style = filled';
+var _user$project$GitesGraph$mainStyle = 'fillcolor = 1, style = filled';
+var _user$project$GitesGraph$topStyles = _elm_lang$core$Native_Utils.update(
+	_elm_community$graph$Graph_GraphViz$defaultStyles,
+	{rankdir: _elm_community$graph$Graph_GraphViz$BT, node: 'shape = box, colorscheme = puor6'});
+var _user$project$GitesGraph$imports = {
+	ctor: '::',
+	_0: A3(
+		_elm_community$graph$Graph$Edge,
+		2,
+		1,
+		{attrs: ''}),
+	_1: {
+		ctor: '::',
+		_0: A3(
+			_elm_community$graph$Graph$Edge,
+			3,
+			1,
+			{attrs: ''}),
+		_1: {
+			ctor: '::',
+			_0: A3(
+				_elm_community$graph$Graph$Edge,
+				4,
+				1,
+				{attrs: ''}),
+			_1: {
+				ctor: '::',
+				_0: A3(
+					_elm_community$graph$Graph$Edge,
+					5,
+					1,
+					{attrs: ''}),
+				_1: {
+					ctor: '::',
+					_0: A3(
+						_elm_community$graph$Graph$Edge,
+						6,
+						1,
+						{attrs: ''}),
+					_1: {
+						ctor: '::',
+						_0: A3(
+							_elm_community$graph$Graph$Edge,
+							25,
+							1,
+							{attrs: ''}),
+						_1: {
+							ctor: '::',
+							_0: A3(
+								_elm_community$graph$Graph$Edge,
+								3,
+								2,
+								{attrs: ''}),
+							_1: {
+								ctor: '::',
+								_0: A3(
+									_elm_community$graph$Graph$Edge,
+									4,
+									2,
+									{attrs: ''}),
+								_1: {
+									ctor: '::',
+									_0: A3(
+										_elm_community$graph$Graph$Edge,
+										5,
+										2,
+										{attrs: ''}),
+									_1: {
+										ctor: '::',
+										_0: A3(
+											_elm_community$graph$Graph$Edge,
+											6,
+											2,
+											{attrs: ''}),
+										_1: {
+											ctor: '::',
+											_0: A3(
+												_elm_community$graph$Graph$Edge,
+												25,
+												2,
+												{attrs: ''}),
+											_1: {
+												ctor: '::',
+												_0: A3(
+													_elm_community$graph$Graph$Edge,
+													6,
+													3,
+													{attrs: ''}),
+												_1: {
+													ctor: '::',
+													_0: A3(
+														_elm_community$graph$Graph$Edge,
+														4,
+														3,
+														{attrs: ''}),
+													_1: {
+														ctor: '::',
+														_0: A3(
+															_elm_community$graph$Graph$Edge,
+															25,
+															3,
+															{attrs: ''}),
+														_1: {
+															ctor: '::',
+															_0: A3(
+																_elm_community$graph$Graph$Edge,
+																7,
+																4,
+																{attrs: ''}),
+															_1: {
+																ctor: '::',
+																_0: A3(
+																	_elm_community$graph$Graph$Edge,
+																	8,
+																	4,
+																	{attrs: ''}),
+																_1: {
+																	ctor: '::',
+																	_0: A3(
+																		_elm_community$graph$Graph$Edge,
+																		9,
+																		4,
+																		{attrs: ''}),
+																	_1: {
+																		ctor: '::',
+																		_0: A3(
+																			_elm_community$graph$Graph$Edge,
+																			10,
+																			4,
+																			{attrs: ''}),
+																		_1: {
+																			ctor: '::',
+																			_0: A3(
+																				_elm_community$graph$Graph$Edge,
+																				11,
+																				4,
+																				{attrs: ''}),
+																			_1: {
+																				ctor: '::',
+																				_0: A3(
+																					_elm_community$graph$Graph$Edge,
+																					12,
+																					4,
+																					{attrs: ''}),
+																				_1: {
+																					ctor: '::',
+																					_0: A3(
+																						_elm_community$graph$Graph$Edge,
+																						12,
+																						5,
+																						{attrs: ''}),
+																					_1: {
+																						ctor: '::',
+																						_0: A3(
+																							_elm_community$graph$Graph$Edge,
+																							11,
+																							5,
+																							{attrs: ''}),
+																						_1: {
+																							ctor: '::',
+																							_0: A3(
+																								_elm_community$graph$Graph$Edge,
+																								17,
+																								5,
+																								{attrs: ''}),
+																							_1: {
+																								ctor: '::',
+																								_0: A3(
+																									_elm_community$graph$Graph$Edge,
+																									14,
+																									5,
+																									{attrs: ''}),
+																								_1: {
+																									ctor: '::',
+																									_0: A3(
+																										_elm_community$graph$Graph$Edge,
+																										6,
+																										5,
+																										{attrs: ''}),
+																									_1: {
+																										ctor: '::',
+																										_0: A3(
+																											_elm_community$graph$Graph$Edge,
+																											15,
+																											5,
+																											{attrs: ''}),
+																										_1: {
+																											ctor: '::',
+																											_0: A3(
+																												_elm_community$graph$Graph$Edge,
+																												18,
+																												6,
+																												{attrs: ''}),
+																											_1: {
+																												ctor: '::',
+																												_0: A3(
+																													_elm_community$graph$Graph$Edge,
+																													19,
+																													6,
+																													{attrs: ''}),
+																												_1: {
+																													ctor: '::',
+																													_0: A3(
+																														_elm_community$graph$Graph$Edge,
+																														20,
+																														6,
+																														{attrs: ''}),
+																													_1: {
+																														ctor: '::',
+																														_0: A3(
+																															_elm_community$graph$Graph$Edge,
+																															21,
+																															6,
+																															{attrs: ''}),
+																														_1: {
+																															ctor: '::',
+																															_0: A3(
+																																_elm_community$graph$Graph$Edge,
+																																22,
+																																6,
+																																{attrs: ''}),
+																															_1: {
+																																ctor: '::',
+																																_0: A3(
+																																	_elm_community$graph$Graph$Edge,
+																																	24,
+																																	6,
+																																	{attrs: ''}),
+																																_1: {
+																																	ctor: '::',
+																																	_0: A3(
+																																		_elm_community$graph$Graph$Edge,
+																																		11,
+																																		7,
+																																		{attrs: ''}),
+																																	_1: {
+																																		ctor: '::',
+																																		_0: A3(
+																																			_elm_community$graph$Graph$Edge,
+																																			12,
+																																			7,
+																																			{attrs: ''}),
+																																		_1: {
+																																			ctor: '::',
+																																			_0: A3(
+																																				_elm_community$graph$Graph$Edge,
+																																				7,
+																																				8,
+																																				{attrs: ''}),
+																																			_1: {
+																																				ctor: '::',
+																																				_0: A3(
+																																					_elm_community$graph$Graph$Edge,
+																																					11,
+																																					8,
+																																					{attrs: ''}),
+																																				_1: {
+																																					ctor: '::',
+																																					_0: A3(
+																																						_elm_community$graph$Graph$Edge,
+																																						10,
+																																						8,
+																																						{attrs: ''}),
+																																					_1: {
+																																						ctor: '::',
+																																						_0: A3(
+																																							_elm_community$graph$Graph$Edge,
+																																							13,
+																																							9,
+																																							{attrs: ''}),
+																																						_1: {
+																																							ctor: '::',
+																																							_0: A3(
+																																								_elm_community$graph$Graph$Edge,
+																																								7,
+																																								9,
+																																								{attrs: ''}),
+																																							_1: {
+																																								ctor: '::',
+																																								_0: A3(
+																																									_elm_community$graph$Graph$Edge,
+																																									10,
+																																									9,
+																																									{attrs: ''}),
+																																								_1: {
+																																									ctor: '::',
+																																									_0: A3(
+																																										_elm_community$graph$Graph$Edge,
+																																										11,
+																																										9,
+																																										{attrs: ''}),
+																																									_1: {
+																																										ctor: '::',
+																																										_0: A3(
+																																											_elm_community$graph$Graph$Edge,
+																																											12,
+																																											9,
+																																											{attrs: ''}),
+																																										_1: {
+																																											ctor: '::',
+																																											_0: A3(
+																																												_elm_community$graph$Graph$Edge,
+																																												7,
+																																												10,
+																																												{attrs: ''}),
+																																											_1: {
+																																												ctor: '::',
+																																												_0: A3(
+																																													_elm_community$graph$Graph$Edge,
+																																													12,
+																																													10,
+																																													{attrs: ''}),
+																																												_1: {
+																																													ctor: '::',
+																																													_0: A3(
+																																														_elm_community$graph$Graph$Edge,
+																																														13,
+																																														11,
+																																														{attrs: ''}),
+																																													_1: {
+																																														ctor: '::',
+																																														_0: A3(
+																																															_elm_community$graph$Graph$Edge,
+																																															17,
+																																															14,
+																																															{attrs: ''}),
+																																														_1: {
+																																															ctor: '::',
+																																															_0: A3(
+																																																_elm_community$graph$Graph$Edge,
+																																																6,
+																																																14,
+																																																{attrs: ''}),
+																																															_1: {
+																																																ctor: '::',
+																																																_0: A3(
+																																																	_elm_community$graph$Graph$Edge,
+																																																	12,
+																																																	14,
+																																																	{attrs: ''}),
+																																																_1: {
+																																																	ctor: '::',
+																																																	_0: A3(
+																																																		_elm_community$graph$Graph$Edge,
+																																																		11,
+																																																		14,
+																																																		{attrs: ''}),
+																																																	_1: {
+																																																		ctor: '::',
+																																																		_0: A3(
+																																																			_elm_community$graph$Graph$Edge,
+																																																			16,
+																																																			15,
+																																																			{attrs: ''}),
+																																																		_1: {
+																																																			ctor: '::',
+																																																			_0: A3(
+																																																				_elm_community$graph$Graph$Edge,
+																																																				17,
+																																																				15,
+																																																				{attrs: ''}),
+																																																			_1: {
+																																																				ctor: '::',
+																																																				_0: A3(
+																																																					_elm_community$graph$Graph$Edge,
+																																																					11,
+																																																					15,
+																																																					{attrs: ''}),
+																																																				_1: {
+																																																					ctor: '::',
+																																																					_0: A3(
+																																																						_elm_community$graph$Graph$Edge,
+																																																						12,
+																																																						15,
+																																																						{attrs: ''}),
+																																																					_1: {
+																																																						ctor: '::',
+																																																						_0: A3(
+																																																							_elm_community$graph$Graph$Edge,
+																																																							12,
+																																																							17,
+																																																							{attrs: ''}),
+																																																						_1: {
+																																																							ctor: '::',
+																																																							_0: A3(
+																																																								_elm_community$graph$Graph$Edge,
+																																																								11,
+																																																								17,
+																																																								{attrs: ''}),
+																																																							_1: {
+																																																								ctor: '::',
+																																																								_0: A3(
+																																																									_elm_community$graph$Graph$Edge,
+																																																									19,
+																																																									18,
+																																																									{attrs: ''}),
+																																																								_1: {
+																																																									ctor: '::',
+																																																									_0: A3(
+																																																										_elm_community$graph$Graph$Edge,
+																																																										18,
+																																																										20,
+																																																										{attrs: ''}),
+																																																									_1: {
+																																																										ctor: '::',
+																																																										_0: A3(
+																																																											_elm_community$graph$Graph$Edge,
+																																																											19,
+																																																											20,
+																																																											{attrs: ''}),
+																																																										_1: {
+																																																											ctor: '::',
+																																																											_0: A3(
+																																																												_elm_community$graph$Graph$Edge,
+																																																												24,
+																																																												20,
+																																																												{attrs: ''}),
+																																																											_1: {
+																																																												ctor: '::',
+																																																												_0: A3(
+																																																													_elm_community$graph$Graph$Edge,
+																																																													18,
+																																																													21,
+																																																													{attrs: ''}),
+																																																												_1: {
+																																																													ctor: '::',
+																																																													_0: A3(
+																																																														_elm_community$graph$Graph$Edge,
+																																																														19,
+																																																														21,
+																																																														{attrs: ''}),
+																																																													_1: {
+																																																														ctor: '::',
+																																																														_0: A3(
+																																																															_elm_community$graph$Graph$Edge,
+																																																															24,
+																																																															21,
+																																																															{attrs: ''}),
+																																																														_1: {
+																																																															ctor: '::',
+																																																															_0: A3(
+																																																																_elm_community$graph$Graph$Edge,
+																																																																18,
+																																																																22,
+																																																																{attrs: ''}),
+																																																															_1: {
+																																																																ctor: '::',
+																																																																_0: A3(
+																																																																	_elm_community$graph$Graph$Edge,
+																																																																	19,
+																																																																	22,
+																																																																	{attrs: ''}),
+																																																																_1: {
+																																																																	ctor: '::',
+																																																																	_0: A3(
+																																																																		_elm_community$graph$Graph$Edge,
+																																																																		23,
+																																																																		22,
+																																																																		{attrs: ''}),
+																																																																	_1: {
+																																																																		ctor: '::',
+																																																																		_0: A3(
+																																																																			_elm_community$graph$Graph$Edge,
+																																																																			24,
+																																																																			22,
+																																																																			{attrs: ''}),
+																																																																		_1: {
+																																																																			ctor: '::',
+																																																																			_0: A3(
+																																																																				_elm_community$graph$Graph$Edge,
+																																																																				19,
+																																																																				24,
+																																																																				{attrs: ''}),
+																																																																			_1: {
+																																																																				ctor: '::',
+																																																																				_0: A3(
+																																																																					_elm_community$graph$Graph$Edge,
+																																																																					31,
+																																																																					25,
+																																																																					{attrs: ''}),
+																																																																				_1: {
+																																																																					ctor: '::',
+																																																																					_0: A3(
+																																																																						_elm_community$graph$Graph$Edge,
+																																																																						27,
+																																																																						25,
+																																																																						{attrs: ''}),
+																																																																					_1: {
+																																																																						ctor: '::',
+																																																																						_0: A3(
+																																																																							_elm_community$graph$Graph$Edge,
+																																																																							29,
+																																																																							25,
+																																																																							{attrs: ''}),
+																																																																						_1: {
+																																																																							ctor: '::',
+																																																																							_0: A3(
+																																																																								_elm_community$graph$Graph$Edge,
+																																																																								28,
+																																																																								25,
+																																																																								{attrs: ''}),
+																																																																							_1: {
+																																																																								ctor: '::',
+																																																																								_0: A3(
+																																																																									_elm_community$graph$Graph$Edge,
+																																																																									26,
+																																																																									25,
+																																																																									{attrs: ''}),
+																																																																								_1: {
+																																																																									ctor: '::',
+																																																																									_0: A3(
+																																																																										_elm_community$graph$Graph$Edge,
+																																																																										31,
+																																																																										26,
+																																																																										{attrs: ''}),
+																																																																									_1: {
+																																																																										ctor: '::',
+																																																																										_0: A3(
+																																																																											_elm_community$graph$Graph$Edge,
+																																																																											28,
+																																																																											26,
+																																																																											{attrs: ''}),
+																																																																										_1: {
+																																																																											ctor: '::',
+																																																																											_0: A3(
+																																																																												_elm_community$graph$Graph$Edge,
+																																																																												29,
+																																																																												26,
+																																																																												{attrs: ''}),
+																																																																											_1: {
+																																																																												ctor: '::',
+																																																																												_0: A3(
+																																																																													_elm_community$graph$Graph$Edge,
+																																																																													30,
+																																																																													26,
+																																																																													{attrs: ''}),
+																																																																												_1: {
+																																																																													ctor: '::',
+																																																																													_0: A3(
+																																																																														_elm_community$graph$Graph$Edge,
+																																																																														31,
+																																																																														27,
+																																																																														{attrs: ''}),
+																																																																													_1: {
+																																																																														ctor: '::',
+																																																																														_0: A3(
+																																																																															_elm_community$graph$Graph$Edge,
+																																																																															30,
+																																																																															27,
+																																																																															{attrs: ''}),
+																																																																														_1: {
+																																																																															ctor: '::',
+																																																																															_0: A3(
+																																																																																_elm_community$graph$Graph$Edge,
+																																																																																28,
+																																																																																27,
+																																																																																{attrs: ''}),
+																																																																															_1: {
+																																																																																ctor: '::',
+																																																																																_0: A3(
+																																																																																	_elm_community$graph$Graph$Edge,
+																																																																																	29,
+																																																																																	27,
+																																																																																	{attrs: ''}),
+																																																																																_1: {
+																																																																																	ctor: '::',
+																																																																																	_0: A3(
+																																																																																		_elm_community$graph$Graph$Edge,
+																																																																																		29,
+																																																																																		31,
+																																																																																		{attrs: ''}),
+																																																																																	_1: {
+																																																																																		ctor: '::',
+																																																																																		_0: A3(
+																																																																																			_elm_community$graph$Graph$Edge,
+																																																																																			30,
+																																																																																			31,
+																																																																																			{attrs: ''}),
+																																																																																		_1: {
+																																																																																			ctor: '::',
+																																																																																			_0: A3(
+																																																																																				_elm_community$graph$Graph$Edge,
+																																																																																				28,
+																																																																																				31,
+																																																																																				{attrs: ''}),
+																																																																																			_1: {ctor: '[]'}
+																																																																																		}
+																																																																																	}
+																																																																																}
+																																																																															}
+																																																																														}
+																																																																													}
+																																																																												}
+																																																																											}
+																																																																										}
+																																																																									}
+																																																																								}
+																																																																							}
+																																																																						}
+																																																																					}
+																																																																				}
+																																																																			}
+																																																																		}
+																																																																	}
+																																																																}
+																																																															}
+																																																														}
+																																																													}
+																																																												}
+																																																											}
+																																																										}
+																																																									}
+																																																								}
+																																																							}
+																																																						}
+																																																					}
+																																																				}
+																																																			}
+																																																		}
+																																																	}
+																																																}
+																																															}
+																																														}
+																																													}
+																																												}
+																																											}
+																																										}
+																																									}
+																																								}
+																																							}
+																																						}
+																																					}
+																																				}
+																																			}
+																																		}
+																																	}
+																																}
+																															}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$GitesGraph$nodes = {
+	ctor: '::',
+	_0: A2(
+		_elm_community$graph$Graph$Node,
+		1,
+		{text: 'Main', attrs: _user$project$GitesGraph$mainStyle}),
+	_1: {
+		ctor: '::',
+		_0: A2(
+			_elm_community$graph$Graph$Node,
+			2,
+			{text: 'Types', attrs: _user$project$GitesGraph$mainStyle}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_community$graph$Graph$Node,
+				3,
+				{text: 'MultLangText', attrs: _user$project$GitesGraph$mainStyle}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_community$graph$Graph$Node,
+					4,
+					{text: 'Booking.Booking', attrs: _user$project$GitesGraph$bookingStyle}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_community$graph$Graph$Node,
+						7,
+						{text: 'Booking.Types', attrs: _user$project$GitesGraph$bookingStyle}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_elm_community$graph$Graph$Node,
+							8,
+							{text: 'Booking.BookingComs', attrs: _user$project$GitesGraph$bookingStyle}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_community$graph$Graph$Node,
+								9,
+								{text: 'Booking.BookingView', attrs: _user$project$GitesGraph$bookingStyle}),
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_community$graph$Graph$Node,
+									10,
+									{text: 'Booking.Utils', attrs: _user$project$GitesGraph$bookingStyle}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_community$graph$Graph$Node,
+										11,
+										{text: 'Booking.MultLangText', attrs: _user$project$GitesGraph$bookingStyle}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_community$graph$Graph$Node,
+											13,
+											{text: 'Booking.StyleSheet', attrs: _user$project$GitesGraph$bookingStyle}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_elm_community$graph$Graph$Node,
+												5,
+												{text: 'BookingAdmin.BookingAdmin', attrs: _user$project$GitesGraph$bookingAdminStyle}),
+											_1: {
+												ctor: '::',
+												_0: A2(
+													_elm_community$graph$Graph$Node,
+													14,
+													{text: 'BookingAdmin.BookingAdminComs', attrs: _user$project$GitesGraph$bookingAdminStyle}),
+												_1: {
+													ctor: '::',
+													_0: A2(
+														_elm_community$graph$Graph$Node,
+														15,
+														{text: 'BookingAdmin.BookingAdminView', attrs: _user$project$GitesGraph$bookingAdminStyle}),
+													_1: {
+														ctor: '::',
+														_0: A2(
+															_elm_community$graph$Graph$Node,
+															16,
+															{text: 'BookingAdmin.StyleSheet', attrs: _user$project$GitesGraph$bookingAdminStyle}),
+														_1: {
+															ctor: '::',
+															_0: A2(
+																_elm_community$graph$Graph$Node,
+																17,
+																{text: 'BookingAdmin.Types', attrs: _user$project$GitesGraph$bookingAdminStyle}),
+															_1: {
+																ctor: '::',
+																_0: A2(
+																	_elm_community$graph$Graph$Node,
+																	6,
+																	{text: 'UserAccounts.UserAccounts', attrs: _user$project$GitesGraph$userAccountsStyle}),
+																_1: {
+																	ctor: '::',
+																	_0: A2(
+																		_elm_community$graph$Graph$Node,
+																		18,
+																		{text: 'UserAccounts.UserAccountsTypes', attrs: _user$project$GitesGraph$userAccountsStyle}),
+																	_1: {
+																		ctor: '::',
+																		_0: A2(
+																			_elm_community$graph$Graph$Node,
+																			19,
+																			{text: 'UserAccounts.MultLangText', attrs: _user$project$GitesGraph$userAccountsStyle}),
+																		_1: {
+																			ctor: '::',
+																			_0: A2(
+																				_elm_community$graph$Graph$Node,
+																				20,
+																				{text: 'UserAccounts.Login', attrs: _user$project$GitesGraph$userAccountsStyle}),
+																			_1: {
+																				ctor: '::',
+																				_0: A2(
+																					_elm_community$graph$Graph$Node,
+																					21,
+																					{text: 'UserAccounts.Signup', attrs: _user$project$GitesGraph$userAccountsStyle}),
+																				_1: {
+																					ctor: '::',
+																					_0: A2(
+																						_elm_community$graph$Graph$Node,
+																						22,
+																						{text: 'UserAccounts.UsrManager', attrs: _user$project$GitesGraph$userAccountsStyle}),
+																					_1: {
+																						ctor: '::',
+																						_0: A2(
+																							_elm_community$graph$Graph$Node,
+																							23,
+																							{text: 'UserAccounts.ComBox', attrs: _user$project$GitesGraph$userAccountsStyle}),
+																						_1: {
+																							ctor: '::',
+																							_0: A2(
+																								_elm_community$graph$Graph$Node,
+																								24,
+																								{text: 'UserAccounts.Utils', attrs: _user$project$GitesGraph$userAccountsStyle}),
+																							_1: {
+																								ctor: '::',
+																								_0: A2(
+																									_elm_community$graph$Graph$Node,
+																									25,
+																									{text: 'GiteGallery.GiteGallery', attrs: _user$project$GitesGraph$giteGalleryStyle}),
+																								_1: {
+																									ctor: '::',
+																									_0: A2(
+																										_elm_community$graph$Graph$Node,
+																										26,
+																										{text: 'GiteGallery.GiteGalleryData', attrs: _user$project$GitesGraph$giteGalleryStyle}),
+																									_1: {
+																										ctor: '::',
+																										_0: A2(
+																											_elm_community$graph$Graph$Node,
+																											27,
+																											{text: 'GiteGallery.GiteGalleryView', attrs: _user$project$GitesGraph$giteGalleryStyle}),
+																										_1: {
+																											ctor: '::',
+																											_0: A2(
+																												_elm_community$graph$Graph$Node,
+																												28,
+																												{text: 'GiteGallery.MultLangText', attrs: _user$project$GitesGraph$giteGalleryStyle}),
+																											_1: {
+																												ctor: '::',
+																												_0: A2(
+																													_elm_community$graph$Graph$Node,
+																													29,
+																													{text: 'GiteGallery.Streams', attrs: _user$project$GitesGraph$giteGalleryStyle}),
+																												_1: {
+																													ctor: '::',
+																													_0: A2(
+																														_elm_community$graph$Graph$Node,
+																														30,
+																														{text: 'GiteGallery.StyleSheet', attrs: _user$project$GitesGraph$giteGalleryStyle}),
+																													_1: {
+																														ctor: '::',
+																														_0: A2(
+																															_elm_community$graph$Graph$Node,
+																															31,
+																															{text: 'GiteGallery.Types', attrs: _user$project$GitesGraph$giteGalleryStyle}),
+																														_1: {
+																															ctor: '::',
+																															_0: A2(
+																																_elm_community$graph$Graph$Node,
+																																12,
+																																{text: 'DatePicker', attrs: _user$project$GitesGraph$datePickerStyle}),
+																															_1: {ctor: '[]'}
+																														}
+																													}
+																												}
+																											}
+																										}
+																									}
+																								}
+																							}
+																						}
+																					}
+																				}
+																			}
+																		}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$GitesGraph$graph = A2(_elm_community$graph$Graph$fromNodesAndEdges, _user$project$GitesGraph$nodes, _user$project$GitesGraph$imports);
+var _user$project$GitesGraph$importsGraphStr = function (s) {
+	return A2(
+		_user$project$GitesGraph$addSubgraphs,
+		s,
+		{ctor: '[]'});
+}(
+	A2(_elm_community$graph$Graph_GraphViz$outputWithStylesWithOverrides, _user$project$GitesGraph$topStyles, _user$project$GitesGraph$graph));
+var _user$project$GitesGraph$toRender = _elm_lang$core$Native_Platform.outgoingPort(
+	'toRender',
+	function (v) {
+		return v;
+	});
+var _user$project$GitesGraph$update = F2(
+	function (msg, model) {
+		var _p19 = msg;
+		if (_p19.ctor === 'SvgStr') {
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				_elm_lang$core$Native_Utils.update(
+					model,
+					{
+						svgStr: {
+							ctor: '::',
+							_0: _user$project$GitesGraph$trimXml(_p19._0),
+							_1: model.svgStr
+						}
+					}),
+				{ctor: '[]'});
+		} else {
+			return A2(
+				_elm_lang$core$Platform_Cmd_ops['!'],
+				model,
+				A2(_elm_lang$core$List$map, _user$project$GitesGraph$toRender, model.graphVizStr));
+		}
+	});
+var _user$project$GitesGraph$svgStrSub = _elm_lang$core$Native_Platform.incomingPort('svgStrSub', _elm_lang$core$Json_Decode$string);
+var _user$project$GitesGraph$Model = F2(
+	function (a, b) {
+		return {graphVizStr: a, svgStr: b};
+	});
+var _user$project$GitesGraph$FolderNode = function (a) {
+	return {ctor: 'FolderNode', _0: a};
+};
+var _user$project$GitesGraph$HtmlNode = function (a) {
+	return {ctor: 'HtmlNode', _0: a};
+};
+var _user$project$GitesGraph$htmlFiles = A2(
+	_elm_lang$core$List$map,
+	_user$project$GitesGraph$HtmlNode,
+	{
+		ctor: '::',
+		_0: 'index.html',
+		_1: {ctor: '[]'}
+	});
+var _user$project$GitesGraph$SqlTableNode = function (a) {
+	return {ctor: 'SqlTableNode', _0: a};
+};
+var _user$project$GitesGraph$sqlTables = A2(
+	_elm_lang$core$List$map,
+	_user$project$GitesGraph$SqlTableNode,
+	{
+		ctor: '::',
+		_0: 'bookings',
+		_1: {
+			ctor: '::',
+			_0: 'dateKind',
+			_1: {
+				ctor: '::',
+				_0: 'users',
+				_1: {ctor: '[]'}
+			}
+		}
+	});
+var _user$project$GitesGraph$ElmNode = function (a) {
+	return {ctor: 'ElmNode', _0: a};
+};
+var _user$project$GitesGraph$elmFiles = A2(
+	_elm_lang$core$List$map,
+	_user$project$GitesGraph$ElmNode,
+	{
+		ctor: '::',
+		_0: 'Booking.Booking',
+		_1: {
+			ctor: '::',
+			_0: 'BookingAdmin.BookingAdmin',
+			_1: {
+				ctor: '::',
+				_0: 'UserAccounts.UserAccounts',
+				_1: {ctor: '[]'}
+			}
+		}
+	});
+var _user$project$GitesGraph$PhpNode = function (a) {
+	return {ctor: 'PhpNode', _0: a};
+};
+var _user$project$GitesGraph$phpFiles = A2(
+	_elm_lang$core$List$map,
+	_user$project$GitesGraph$PhpNode,
+	{
+		ctor: '::',
+		_0: 'getBookings',
+		_1: {
+			ctor: '::',
+			_0: 'getBookingsAdmin',
+			_1: {
+				ctor: '::',
+				_0: 'login',
+				_1: {
+					ctor: '::',
+					_0: 'logout',
+					_1: {
+						ctor: '::',
+						_0: 'processUpdates',
+						_1: {
+							ctor: '::',
+							_0: 'saveBooking',
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		}
+	});
+var _user$project$GitesGraph$comNodes = A2(
+	_elm_lang$core$Basics_ops['++'],
+	_user$project$GitesGraph$elmFiles,
+	A2(
+		_elm_lang$core$Basics_ops['++'],
+		_user$project$GitesGraph$phpFiles,
+		A2(_elm_lang$core$Basics_ops['++'], _user$project$GitesGraph$sqlTables, _user$project$GitesGraph$htmlFiles)));
+var _user$project$GitesGraph$Port = {ctor: 'Port'};
+var _user$project$GitesGraph$FileInteract = {ctor: 'FileInteract'};
+var _user$project$GitesGraph$Delete = {ctor: 'Delete'};
+var _user$project$GitesGraph$InsertEdge = {ctor: 'InsertEdge'};
+var _user$project$GitesGraph$SelectEdge = {ctor: 'SelectEdge'};
+var _user$project$GitesGraph$UpdateEdge = {ctor: 'UpdateEdge'};
+var _user$project$GitesGraph$PostEdge = {ctor: 'PostEdge'};
+var _user$project$GitesGraph$GetEdge = {ctor: 'GetEdge'};
+var _user$project$GitesGraph$comEdges = {
+	ctor: '::',
+	_0: {
+		ctor: '_Tuple3',
+		_0: 'getBookings',
+		_1: 'Booking.Booking',
+		_2: {
+			ctor: '::',
+			_0: _user$project$GitesGraph$GetEdge,
+			_1: {ctor: '[]'}
+		}
+	},
+	_1: {
+		ctor: '::',
+		_0: {
+			ctor: '_Tuple3',
+			_0: 'Booking.Booking',
+			_1: 'saveBooking',
+			_2: {
+				ctor: '::',
+				_0: _user$project$GitesGraph$PostEdge,
+				_1: {ctor: '[]'}
+			}
+		},
+		_1: {
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple3',
+				_0: 'Booking.Booking',
+				_1: 'index.html',
+				_2: {
+					ctor: '::',
+					_0: _user$project$GitesGraph$Port,
+					_1: {ctor: '[]'}
+				}
+			},
+			_1: {
+				ctor: '::',
+				_0: {
+					ctor: '_Tuple3',
+					_0: 'getBookingsAdmin',
+					_1: 'BookingAdmin.BookingAdmin',
+					_2: {
+						ctor: '::',
+						_0: _user$project$GitesGraph$GetEdge,
+						_1: {ctor: '[]'}
+					}
+				},
+				_1: {
+					ctor: '::',
+					_0: {
+						ctor: '_Tuple3',
+						_0: 'BookingAdmin.BookingAdmin',
+						_1: 'processUpdates',
+						_2: {
+							ctor: '::',
+							_0: _user$project$GitesGraph$PostEdge,
+							_1: {ctor: '[]'}
+						}
+					},
+					_1: {
+						ctor: '::',
+						_0: {
+							ctor: '_Tuple3',
+							_0: 'UserAccounts.UserAccounts',
+							_1: 'login',
+							_2: {
+								ctor: '::',
+								_0: _user$project$GitesGraph$PostEdge,
+								_1: {ctor: '[]'}
+							}
+						},
+						_1: {
+							ctor: '::',
+							_0: {
+								ctor: '_Tuple3',
+								_0: 'login',
+								_1: 'UserAccounts.UserAccounts',
+								_2: {
+									ctor: '::',
+									_0: _user$project$GitesGraph$GetEdge,
+									_1: {ctor: '[]'}
+								}
+							},
+							_1: {
+								ctor: '::',
+								_0: {
+									ctor: '_Tuple3',
+									_0: 'UserAccounts.UserAccounts',
+									_1: 'logout',
+									_2: {
+										ctor: '::',
+										_0: _user$project$GitesGraph$PostEdge,
+										_1: {ctor: '[]'}
+									}
+								},
+								_1: {
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple3',
+										_0: 'users',
+										_1: 'login',
+										_2: {
+											ctor: '::',
+											_0: _user$project$GitesGraph$SelectEdge,
+											_1: {ctor: '[]'}
+										}
+									},
+									_1: {
+										ctor: '::',
+										_0: {
+											ctor: '_Tuple3',
+											_0: 'dateKind',
+											_1: 'getBookings',
+											_2: {
+												ctor: '::',
+												_0: _user$project$GitesGraph$SelectEdge,
+												_1: {ctor: '[]'}
+											}
+										},
+										_1: {
+											ctor: '::',
+											_0: {
+												ctor: '_Tuple3',
+												_0: 'users',
+												_1: 'getBookingsAdmin',
+												_2: {
+													ctor: '::',
+													_0: _user$project$GitesGraph$SelectEdge,
+													_1: {ctor: '[]'}
+												}
+											},
+											_1: {
+												ctor: '::',
+												_0: {
+													ctor: '_Tuple3',
+													_0: 'dateKind',
+													_1: 'getBookingsAdmin',
+													_2: {
+														ctor: '::',
+														_0: _user$project$GitesGraph$SelectEdge,
+														_1: {ctor: '[]'}
+													}
+												},
+												_1: {
+													ctor: '::',
+													_0: {
+														ctor: '_Tuple3',
+														_0: 'bookings',
+														_1: 'getBookingsAdmin',
+														_2: {
+															ctor: '::',
+															_0: _user$project$GitesGraph$SelectEdge,
+															_1: {ctor: '[]'}
+														}
+													},
+													_1: {
+														ctor: '::',
+														_0: {
+															ctor: '_Tuple3',
+															_0: 'users',
+															_1: 'processUpdates',
+															_2: {
+																ctor: '::',
+																_0: _user$project$GitesGraph$SelectEdge,
+																_1: {ctor: '[]'}
+															}
+														},
+														_1: {
+															ctor: '::',
+															_0: {
+																ctor: '_Tuple3',
+																_0: 'processUpdates',
+																_1: 'dateKind',
+																_2: {
+																	ctor: '::',
+																	_0: _user$project$GitesGraph$UpdateEdge,
+																	_1: {
+																		ctor: '::',
+																		_0: _user$project$GitesGraph$InsertEdge,
+																		_1: {
+																			ctor: '::',
+																			_0: _user$project$GitesGraph$Delete,
+																			_1: {ctor: '[]'}
+																		}
+																	}
+																}
+															},
+															_1: {
+																ctor: '::',
+																_0: {
+																	ctor: '_Tuple3',
+																	_0: 'processUpdates',
+																	_1: 'bookings',
+																	_2: {
+																		ctor: '::',
+																		_0: _user$project$GitesGraph$UpdateEdge,
+																		_1: {
+																			ctor: '::',
+																			_0: _user$project$GitesGraph$InsertEdge,
+																			_1: {
+																				ctor: '::',
+																				_0: _user$project$GitesGraph$Delete,
+																				_1: {ctor: '[]'}
+																			}
+																		}
+																	}
+																},
+																_1: {
+																	ctor: '::',
+																	_0: {
+																		ctor: '_Tuple3',
+																		_0: 'saveBooking',
+																		_1: 'bookings',
+																		_2: {
+																			ctor: '::',
+																			_0: _user$project$GitesGraph$InsertEdge,
+																			_1: {ctor: '[]'}
+																		}
+																	},
+																	_1: {
+																		ctor: '::',
+																		_0: {
+																			ctor: '_Tuple3',
+																			_0: 'saveBooking',
+																			_1: 'dateKind',
+																			_2: {
+																				ctor: '::',
+																				_0: _user$project$GitesGraph$InsertEdge,
+																				_1: {ctor: '[]'}
+																			}
+																		},
+																		_1: {ctor: '[]'}
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$GitesGraph$comGraphStr = A2(_user$project$GitesGraph$makeComGraph, _user$project$GitesGraph$comNodes, _user$project$GitesGraph$comEdges);
+var _user$project$GitesGraph$init = function () {
+	var graphs = {
+		ctor: '::',
+		_0: _user$project$GitesGraph$importsGraphStr,
+		_1: {
+			ctor: '::',
+			_0: _user$project$GitesGraph$comGraphStr,
+			_1: {ctor: '[]'}
+		}
+	};
+	return A2(
+		_elm_lang$core$Platform_Cmd_ops['!'],
+		{
+			graphVizStr: graphs,
+			svgStr: {ctor: '[]'}
+		},
+		A2(_elm_lang$core$List$map, _user$project$GitesGraph$toRender, graphs));
+}();
+var _user$project$GitesGraph$Parse = {ctor: 'Parse'};
+var _user$project$GitesGraph$SvgStr = function (a) {
+	return {ctor: 'SvgStr', _0: a};
+};
+var _user$project$GitesGraph$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$batch(
+		{
+			ctor: '::',
+			_0: _user$project$GitesGraph$svgStrSub(_user$project$GitesGraph$SvgStr),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$GitesGraph$main = _elm_lang$html$Html$program(
+	{init: _user$project$GitesGraph$init, update: _user$project$GitesGraph$update, view: _user$project$GitesGraph$view, subscriptions: _user$project$GitesGraph$subscriptions})();
